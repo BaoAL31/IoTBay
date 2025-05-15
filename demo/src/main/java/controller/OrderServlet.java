@@ -61,7 +61,7 @@ public class OrderServlet extends HttpServlet {
                     break;
                 case "submit":
                     orderDAO.updateOrderStatus(orderId, "submitted");
-                    response.sendRedirect("payment.jsp");
+                    response.sendRedirect("make_payment.jsp");
                     break;
                 default:
                     throw new ServletException("Invalid action: " + action);

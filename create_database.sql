@@ -65,7 +65,7 @@ CREATE TABLE Payment (
     card_number   VARCHAR(20)     NOT NULL,           -- tokenized or masked
     amount        DECIMAL(10,2)   NOT NULL CHECK(amount >= 0),
     paid_at       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    status        ENUM('pending','completed','cancelled') NOT NULL DEFAULT 'draft',
+    status        ENUM('completed','cancelled') NOT NULL DEFAULT 'pending',
     FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE
 );
 
@@ -118,7 +118,7 @@ INSERT INTO OrderItem (order_id, device_id, quantity, unit_price, added_at) VALU
 INSERT INTO Payment (order_id, method, card_number, amount, paid_at, status) VALUES
   (3, 'Credit Card', '****-****-****-1234', 129.50, '2025-04-22 14:06:00', 'completed'),
   (1, 'Credit Card', '****-****-****-5678', 159.90, '2025-04-20 09:05:00', 'completed'),
-  (4, 'Credit Card', '****-****-****-9012', 199.98, '2025-04-18 08:25:00', 'completed');
+  (4, 'Credit Card', '****-****-****-9012', 199.98, '2025-04-18 08:25:00', 'cancelled');
 
 -- (Optional) PaymentItems for line-level allocations
 INSERT INTO PaymentItem (payment_id, order_item_id, amount) VALUES

@@ -4,6 +4,8 @@ import model.Payment;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class PaymentDAO {
     private Connection conn;
@@ -48,6 +50,33 @@ public class PaymentDAO {
             }
         }
         return paymentIds;
+    }
+
+    // Returns a list of items in the payment with their quantities
+    public Map<Integer, Integer> getPaymentItems(Integer paymentId) throws SQLException {
+        String sql = "SELECT " +
+                "    d.device_id, " +
+                "    d.name, " +
+                "    d.type, " +
+                "    d.unit_price, " +
+                "    d.stock, " +
+                "    pi.quantity " +
+                "FROM PaymentItem pi " +
+                "JOIN Device d ON pi.device_id = d.device_id " +
+                "WHERE pi.payment_id = ?";
+
+        Map<Integer, Integer> items = new HashMap<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, paymentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    items.put(
+                            rs.getInt("device_id"),
+                            rs.getInt("quantity"));
+                }
+            }
+        }
+        return items;
     }
 
     // Create a new payment
