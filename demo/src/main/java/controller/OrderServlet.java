@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -60,8 +59,9 @@ public class OrderServlet extends HttpServlet {
                     response.sendRedirect("order.jsp");
                     break;
                 case "submit":
-                    orderDAO.updateOrderStatus(orderId, "submitted");
-                    response.sendRedirect("make_payment.jsp");
+                    // orderDAO.updateOrderStatus(orderId, "submitted");
+                    request.setAttribute("orderId", orderId); // Set orderId as request attribute
+                    request.getRequestDispatcher("make_payment.jsp").forward(request, response);
                     break;
                 default:
                     throw new ServletException("Invalid action: " + action);

@@ -6,7 +6,6 @@ model\Device.class
 controller\OrderServlet.class
 model\Payment.class
 model\Order.class
-controller\CartDisplayTest.class
 model\dao\DeviceDAO.class
 controller\DeviceListServlet.class
 model\dao\PaymentDAO.class

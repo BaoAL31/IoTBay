@@ -61,6 +61,7 @@
                     </form>
                 </div>
             </div>
+            <h4>Created Date: <%= orderDAO.getOrderCreatedDate(orderId) %></h4>
             <table class="order-table" border="1">
             <tr>
                 <th>Product</th>

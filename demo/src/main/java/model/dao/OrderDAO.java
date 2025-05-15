@@ -144,6 +144,19 @@ public class OrderDAO {
         return items;
     }
 
+    public String getOrderCreatedDate(Integer orderId) throws SQLException {
+        String query = "SELECT created_at FROM `order` WHERE order_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, orderId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getTimestamp("created_at").toString();
+                }
+            }
+        }
+        return null;
+    }
+
     public void updateOrderStatus(int orderId, String status) throws SQLException {
         String query = "UPDATE `order` SET status = ? WHERE order_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
