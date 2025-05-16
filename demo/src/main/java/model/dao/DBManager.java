@@ -1,7 +1,11 @@
 package model.dao;
 
-import model.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import model.User;
 
 /* 
 * DBManager is the primary DAO class to interact with the database. 
@@ -26,7 +30,7 @@ public class DBManager {
         ResultSet rs = pstmt.executeQuery();
         
         if (rs.next()) {
-            return new User(rs.getString("name"), rs.getString("email"), rs.getString("password"));
+            return new User(rs.getString("name"), rs.getString("email"), rs.getString("password"), rs.getString("phoneNumber"), rs.getString("address"));
         }
         return null;
     }
