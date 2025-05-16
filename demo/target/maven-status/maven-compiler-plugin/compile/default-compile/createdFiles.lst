@@ -1,4 +1,5 @@
 controller\LoginServlet.class
+controller\UserProfileServlet.class
 controller\ConnServlet.class
 model\dao\DB.class
 model\dao\DBConnector.class
@@ -6,9 +7,13 @@ model\Device.class
 controller\OrderServlet.class
 model\Payment.class
 model\Order.class
+model\Delivery.class
 model\dao\DeviceDAO.class
 controller\DeviceListServlet.class
 model\dao\PaymentDAO.class
+controller\DeliveryServlet.class
+model\dao\DeliveryDAO.class
+model\dao\UserDAO.class
 controller\TestDB.class
 model\dao\DBManager.class
 model\dao\OrderDAO.class
