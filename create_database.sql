@@ -125,3 +125,6 @@ INSERT INTO PaymentItem (payment_id, order_item_id, amount) VALUES
   (1, 4, 129.50),
   (2, 1,  99.90),  -- e.g. sum of line items
   (3, 5, 199.98);
+
+ALTER TABLE User ADD address VARCHAR(255);
+

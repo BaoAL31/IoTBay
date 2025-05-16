@@ -1,10 +1,8 @@
 package model;
 
-import java.util.Random;
-
 public class User {
     private int userID;
-    private String name;
+    private String fullName;
     private String email;
     private String password;
     private String phoneNumber;
@@ -13,18 +11,12 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String name, String email, String password, String phoneNumber, String address) {
-        this.userID = generateRandomUserID();
-        this.name = name;
+    public User(String fullName, String email, String password, String phoneNumber, String address) {
+        this.fullName = fullName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.address = address;
-    }
-
-    private int generateRandomUserID() {
-        Random rand = new Random();
-        return 10000 + rand.nextInt(90000);
     }
 
     // Getters and setters
@@ -36,12 +28,12 @@ public class User {
         this.userID = userID;
     }
 
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
