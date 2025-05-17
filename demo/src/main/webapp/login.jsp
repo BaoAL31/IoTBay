@@ -1,5 +1,11 @@
 <%@ page import="model.User" %>
-<jsp:include page="ConnServlet"/>
+<%
+    if (session.getAttribute("manager") == null) {
+        response.sendRedirect("ConnServlet");
+        return;
+    }
+%>
+
 
 <!DOCTYPE html>
 <html>
@@ -14,6 +20,8 @@
         Password: <input type="password" name="password" required><br>
         <input type="submit" name="loginButton" value="Login">
     </form>
+    <br><br>
+    <a href="registerUser.jsp">Register</a>
 
     <% 
         String errorMessage = (String) session.getAttribute("errorMsg");

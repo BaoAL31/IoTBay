@@ -12,7 +12,7 @@ public class UserDAO {
 
     // Inserts a new user into the database
     public boolean createUser(User user) {
-        String sql = "INSERT INTO User (full_name, email, password, phone, address) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User (full_name, email, password, phone, address, user_type) VALUES (?, ?, ?, ?, ?, ?)";
     
         try {
             DBConnector db = new DBConnector();
@@ -32,7 +32,7 @@ public class UserDAO {
                 ResultSet keys = stmt.getGeneratedKeys();
                 if (keys.next()) {
                     int id = keys.getInt(1);
-                    user.setUserID(id); // ✅ Set the correct user ID
+                    user.setUserID(id); //Set the correct user ID
                     System.out.println("Generated user_id = " + id);
                 }
             }

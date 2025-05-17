@@ -140,9 +140,11 @@ public class UserProfileServlet extends HttpServlet {
      * Updates an existing user profile with data from the update form.
      */
     private void updateUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-            throws ServletException, IOException, SQLException {
+        throws ServletException, IOException, SQLException {
 
-        // Retrieve updated user details from the request
+        HttpSession session = request.getSession();
+
+        // Retrieve updated user details from the form
         int userID = Integer.parseInt(request.getParameter("userID"));
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -150,23 +152,35 @@ public class UserProfileServlet extends HttpServlet {
         String phone = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
 
-        // Create a new User object with updated data
-        User user = new User(name, email, password, phone, address);
-        user.setUserID(userID);
+        // Get the logged-in user from session
+        User loggedUser = (User) session.getAttribute("loggedUser");
 
-        // Attempt to update the user in the database
-        boolean updated = userDAO.updateUser(user);
+        // Create the updated user object
+        User updatedUser = new User(name, email, password, phone, address);
+        updatedUser.setUserID(userID);
 
-        // Forward to the profile view or edit form depending on the outcome
+        // Update the database
+        boolean updated = userDAO.updateUser(updatedUser);
+
         if (updated) {
-            request.setAttribute("user", user);
-            request.setAttribute("message", "Profile updated.");
-            request.getRequestDispatcher("userProfile.jsp").forward(request, response);
+            request.setAttribute("user", updatedUser);
+
+            if (loggedUser != null && loggedUser.getUserID() == userID) {
+                // This is the currently logged-in user updating their own profile
+                session.setAttribute("loggedUser", updatedUser);  // update session
+                request.setAttribute("message", "Profile updated.");
+                request.getRequestDispatcher("userProfile.jsp").forward(request, response);
+            } else {
+                // Admin updated another user's profile
+                response.sendRedirect("adminDashboard.jsp");
+            }
+
         } else {
             request.setAttribute("error", "Failed to update profile.");
             request.getRequestDispatcher("editUserProfile.jsp").forward(request, response);
         }
     }
+
 
     /**
      * Retrieves and displays a user's profile based on their userID.
