@@ -4,9 +4,9 @@
 <%@ page import="model.dao.*" %>
 
 <%
-    DeviceDAO deviceDAO   = (DeviceDAO) session.getAttribute("deviceDAO");
-    OrderDAO orderDAO     = (OrderDAO) session.getAttribute("orderDAO");
-    Integer orderId       = Integer.parseInt(request.getParameter("orderId"));
+    DeviceDAO deviceDAO = (DeviceDAO) session.getAttribute("deviceDAO");
+    OrderDAO orderDAO = (OrderDAO) session.getAttribute("orderDAO");
+    Integer orderId = Integer.parseInt(request.getParameter("orderId"));
     Map<Integer,Integer> items = orderDAO.getOrderItems(orderId);
 
     // Calculate total amount
@@ -58,6 +58,7 @@
     <h2>Payment Details</h2>
     <form method="POST" action="PaymentServlet" class="payment-form">
       <input type="hidden" name="orderId" value="<%= orderId %>" />
+      <input type="hidden" name="totalAmount" value="<%= totalAmount %>" />
 
       <label for="method">Payment Method:</label>
       <select id="method" name="method" required>
@@ -73,8 +74,20 @@
         $<%= String.format("%.2f", totalAmount) %>
       </div>
 
-      <button type="submit" class="submit-btn">Submit Payment</button>
+      <button type="submit" name="action" class="submit-btn" value="checkout">Checkout</button>
+      <button type="button" name="action" class="cancel-btn" value="cancel">Cancel</button>
     </form>
+
+    <% 
+        String errorMessage = (String) session.getAttribute("errorMsg");
+        if (errorMessage != null) {
+    %>
+      <script>
+        alert("<%= errorMessage %>");
+      </script>
+    <%        
+    }
+    %>
   </div>
 </body>
 </html>
