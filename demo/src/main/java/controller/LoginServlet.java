@@ -54,7 +54,7 @@ public class LoginServlet extends HttpServlet {
             User user = manager.findUser(email, password);
 
             if (user != null) {
-                // ✅ Store logged user with full info (including userType)
+                // Store logged user with full info (including userType)
                 session.setAttribute("loggedUser", user);
 
                 System.out.println("Login success. User role: " + user.getUserType());

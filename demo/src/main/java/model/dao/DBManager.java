@@ -22,25 +22,26 @@ public class DBManager {
 
     // Find user by email and password in the database
     public User findUser(String email, String password) throws SQLException {
-        // setup the select sql query string
-        String query = "SELECT * FROM User WHERE email = ? AND password = ?";
+        String query = "SELECT * FROM user WHERE email = ? AND password = ?";
         PreparedStatement pstmt = conn.prepareStatement(query);
         pstmt.setString(1, email);
         pstmt.setString(2, password);
         ResultSet rs = pstmt.executeQuery();
-        
+    
         if (rs.next()) {
-            return new User(
-                rs.getString("full_name"),
-                rs.getString("email"),
-                rs.getString("password"),
-                rs.getString("phone"),
-                rs.getString("address") // created_at is optional, or add a new field in User.java
-            );
-
+            User user = new User();
+            user.setUserID(rs.getInt("user_id"));
+            user.setFullName(rs.getString("full_name"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            user.setPhoneNumber(rs.getString("phone"));
+            user.setAddress(rs.getString("address"));
+            user.setUserType(rs.getString("user_type"));
+            return user;
         }
         return null;
     }
+    
 
 
     // update a user details in the database
