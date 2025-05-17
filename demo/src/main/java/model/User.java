@@ -7,6 +7,7 @@ public class User {
     private String password;
     private String phoneNumber;
     private String address;
+    private String userType;
 
     // Constructors
     public User() {}
@@ -66,5 +67,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

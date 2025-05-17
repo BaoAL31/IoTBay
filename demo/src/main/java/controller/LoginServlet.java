@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,16 +20,15 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-
-        // 1- retrieve the current session
+        // 1- retrieve session
         HttpSession session = request.getSession();
-        // 2- create an instance of the Validator class
         Validator validator = new Validator();
-        // 3- capture the posted email
+
+        // 2- get email and password from form
         String email = request.getParameter("email");
-        // 4- capture the posted password
         String password = request.getParameter("password");
-        // 5- retrieve the manager instance from session
+
+        // 3- get DBManager from session
         DBManager manager = (DBManager) session.getAttribute("manager");
 
         System.out.println("LoginServlet.doPost() called");
@@ -36,37 +36,43 @@ public class LoginServlet extends HttpServlet {
         if (manager == null) {
             throw new ServletException("DBManager not found in session");
         }
-        User user = null;
+
+        // 4- validation
+        if (!validator.validateEmail(email)) {
+            session.setAttribute("errorMsg", "Invalid email format.");
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        if (!validator.validatePassword(password)) {
+            session.setAttribute("errorMsg", "Invalid password format.");
+            response.sendRedirect("login.jsp");
+            return;
+        }
 
         try {
-            user = manager.findUser(email, password);
+            User user = manager.findUser(email, password);
+
+            if (user != null) {
+                // ✅ Store logged user with full info (including userType)
+                session.setAttribute("loggedUser", user);
+
+                System.out.println("Login success. User role: " + user.getUserType());
+
+                // Optionally: redirect based on role
+                if ("admin".equals(user.getUserType())) {
+                    response.sendRedirect("adminDashboard.jsp");
+                } else {
+                    response.sendRedirect("welcome_page.jsp");
+                }
+            } else {
+                session.setAttribute("errorMsg", "User does not exist.");
+                response.sendRedirect("login.jsp");
+            }
+
         } catch (SQLException ex) {
             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServletException("Database error during login", ex);
         }
-
-        if (!validator.validateEmail(email)) {
-            System.out.println("Invalid email format");
-            // 8-set incorrect email error to the session
-            session.setAttribute("errorMsg", "Invalid email format.");
-            // 9- redirect user back to the login.jsp
-            // request.getRequestDispatcher("login.jsp").include(request, response);
-            response.sendRedirect("login.jsp");
-        } else if (!validator.validatePassword(password)) {
-            // 11-set incorrect password error to the session
-            session.setAttribute("errorMsg", "Invalid password format.");
-            // 12- redirect user back to the login.jsp
-            response.sendRedirect("login.jsp");
-        } else if (user != null) {
-            // 13-save the logged in user object to the session
-            session.setAttribute("user", user);
-            // 14- redirect user to the main.jsp
-            request.getRequestDispatcher("welcome_page.jsp").include(request, response);
-        } else {
-            // 15-set user does not exist error to the session
-            session.setAttribute("errorMsg", "User does not exist.");
-            // 16- redirect user back to the login.jsp
-            request.getRequestDispatcher("login.jsp").include(request, response);
-        }
-
     }
 }

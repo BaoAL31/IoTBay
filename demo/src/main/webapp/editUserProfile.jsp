@@ -15,7 +15,7 @@
         <input type="hidden" name="userID" value="<%= user.getUserID() %>"/>
 
         <label>Name:</label><br/>
-        <input type="text" name="name" value="<%= user.getName() %>" required/><br/><br/>
+        <input type="text" name="name" value="<%= user.getFullName() %>" required/>
 
         <label>Email:</label><br/>
         <input type="email" name="email" value="<%= user.getEmail() %>" required/><br/><br/>

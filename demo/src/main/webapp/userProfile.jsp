@@ -15,7 +15,7 @@
         if (user != null) {
     %>
         <p><strong>User ID:</strong> <%= user.getUserID() %></p>
-        <p><strong>Name:</strong> <%= user.getName() %></p>
+        <p><strong>Name:</strong> <%= user.getFullName() %></p>
         <p><strong>Email:</strong> <%= user.getEmail() %></p>
         <p><strong>Phone Number:</strong> <%= user.getPhoneNumber() %></p>
         <p><strong>Address:</strong> <%= user.getAddress() %></p>

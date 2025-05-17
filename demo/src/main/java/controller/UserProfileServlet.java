@@ -106,34 +106,35 @@ public class UserProfileServlet extends HttpServlet {
      * Registers a new user using the data from the registration form.
      */
     private void registerUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-            throws ServletException, IOException, SQLException {
+    throws ServletException, IOException, SQLException {
 
-        // Retrieve user registration parameters from the request
+        System.out.println("registerUser() STARTED");
+
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String phone = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
 
-        // Generate a unique 5-digit user ID using the helper method
-        int userID = generateUniqueUserID(userDAO);
+        System.out.println("Received values: " + name + ", " + email + ", " + phone);
 
-        // Create a new User object with the provided data and generated ID
         User user = new User(name, email, password, phone, address);
-        user.setUserID(userID);
 
-        // Attempt to create the user in the database
         boolean created = userDAO.createUser(user);
 
-        // Forward to appropriate JSP page based on the outcome
+        System.out.println("User created: " + created);
+
         if (created) {
             request.setAttribute("user", user);
-            request.getRequestDispatcher("userProfile.jsp").forward(request, response);
+            System.out.println("Forwarding to userProfile.jsp");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Failed to register user.");
+            System.out.println("Forwarding to registerUser.jsp with error");
             request.getRequestDispatcher("registerUser.jsp").forward(request, response);
         }
     }
+
 
     /**
      * Updates an existing user profile with data from the update form.
@@ -171,42 +172,47 @@ public class UserProfileServlet extends HttpServlet {
      * Retrieves and displays a user's profile based on their userID.
      */
     private void viewUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-            throws ServletException, IOException, SQLException {
+        throws ServletException, IOException, SQLException {
 
-        // Parse userID parameter and fetch user from database
+        HttpSession session = request.getSession();
+        User loggedUser = (User) session.getAttribute("loggedUser");
+
         int userID = Integer.parseInt(request.getParameter("userID"));
         User user = userDAO.getUserById(userID);
 
-        // Forward to the profile JSP with user data if found
-        if (user != null) {
-            request.setAttribute("user", user);
-            request.getRequestDispatcher("userProfile.jsp").forward(request, response);
-        } else {
-            // If user is not found, display error message on profile page
-            request.setAttribute("error", "User not found.");
-            request.getRequestDispatcher("userProfile.jsp").forward(request, response);
+        if (loggedUser == null || user == null ||
+            (!"admin".equals(loggedUser.getUserType()) && loggedUser.getUserID() != userID)) {
+            response.sendRedirect("unauthorized.jsp");
+            return;
         }
+
+        request.setAttribute("user", user);
+        request.getRequestDispatcher("userProfile.jsp").forward(request, response);
     }
+
 
     /**
      * Retrieves user data for editing and forwards the data to the edit form.
      */
     private void showEditForm(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-            throws ServletException, IOException, SQLException {
+        throws ServletException, IOException, SQLException {
 
-        // Get the userID parameter from the request and fetch the corresponding user
+        HttpSession session = request.getSession();
+        User loggedUser = (User) session.getAttribute("loggedUser");
+
         int userID = Integer.parseInt(request.getParameter("userID"));
         User user = userDAO.getUserById(userID);
 
-        // If user exists, set the user object as an attribute and forward to the edit form
-        if (user != null) {
-            request.setAttribute("user", user);
-            request.getRequestDispatcher("editUserProfile.jsp").forward(request, response);
-        } else {
-            // If the user isn't found, redirect to the default profile page
-            response.sendRedirect("userProfile.jsp");
+        if (loggedUser == null || user == null ||
+            (!"admin".equals(loggedUser.getUserType()) && loggedUser.getUserID() != userID)) {
+            response.sendRedirect("unauthorized.jsp");
+            return;
         }
+
+        request.setAttribute("user", user);
+        request.getRequestDispatcher("editUserProfile.jsp").forward(request, response);
     }
+
 
     /**
      * Generates a unique 5-digit user ID by checking the database for duplicates.
