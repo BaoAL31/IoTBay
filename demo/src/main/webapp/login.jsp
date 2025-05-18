@@ -1,11 +1,5 @@
 <%@ page import="model.User" %>
-<%
-    if (session.getAttribute("manager") == null) {
-        response.sendRedirect("ConnServlet");
-        return;
-    }
-%>
-
+<jsp:include page="ConnServlet"/>
 
 <!DOCTYPE html>
 <html>

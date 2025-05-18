@@ -14,12 +14,13 @@
 </head>
 <body>
     <h2>Welcome, <%= loggedUser.getFullName() %>!</h2>
-    <p>You are logged in as: <strong><%= loggedUser.getUserType() %></strong></p>
+    <p>You are logged in as: <strong><%= loggedUser.getFullName() %></strong></p>
 
     <% if ("admin".equals(loggedUser.getUserType())) { %>
         <p><a href="adminDashboard.jsp">Go to Admin Dashboard</a></p>
     <% } else { %>
-        <p><a href="UserProfileServlet?action=view&userID=<%= loggedUser.getUserID() %>">View My Profile</a></p>
+        <p><a href="UserProfileServlet?action=view&userID=<%= loggedUser.getUserID() %>">View My Profile</a></p><br><br>
+        <p><a href="main_dashboard.jsp">View Products</a></p>
     <% } %>
 
     <p><a href="logout.jsp">Logout</a></p>

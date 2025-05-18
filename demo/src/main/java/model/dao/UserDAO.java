@@ -24,7 +24,7 @@ public class UserDAO {
             stmt.setString(3, user.getPassword());
             stmt.setString(4, user.getPhoneNumber());
             stmt.setString(5, user.getAddress());
-            stmt.setString(6, "user");
+            stmt.setString(6, user.getUserType());
     
             int affectedRows = stmt.executeUpdate();
     
@@ -183,5 +183,45 @@ public class UserDAO {
 
         return users;
     }
+
+    // Add new user (used by admin)
+    public boolean addUser(User user) {
+        String sql = "INSERT INTO User (full_name, email, password, phone, address, user_type) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            DBConnector db = new DBConnector();
+            Connection conn = db.openConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, user.getFullName());
+            stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getPassword());
+            stmt.setString(4, user.getPhoneNumber());
+            stmt.setString(5, user.getAddress());
+            stmt.setString(6, user.getUserType());
+            boolean result = stmt.executeUpdate() > 0;
+            db.closeConnection();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Delete user by ID
+    public boolean deleteUserById(int userId) {
+        String sql = "DELETE FROM User WHERE user_id = ?";
+        try {
+            DBConnector db = new DBConnector();
+            Connection conn = db.openConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            boolean result = stmt.executeUpdate() > 0;
+            db.closeConnection();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 }

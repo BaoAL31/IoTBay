@@ -25,6 +25,9 @@
             <input type="hidden" name="userID" value="<%= user.getUserID() %>"/>
             <input type="submit" value="Edit Profile"/>
         </form>
+
+        <a href="welcome_page.jsp">Back to Home</a>
+
     <%
         } else if (error != null) {
     %>

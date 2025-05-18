@@ -18,7 +18,6 @@ public class User {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.userType = "user";
     }
 
     // Getters and setters

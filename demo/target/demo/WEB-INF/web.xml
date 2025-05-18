@@ -69,5 +69,15 @@
         <url-pattern>/UserProfileServlet</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>AdminUserServlet</servlet-name>
+        <servlet-class>controller.AdminUserServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminUserServlet</servlet-name>
+        <url-pattern>/AdminUserServlet</url-pattern>
+    </servlet-mapping>
+
 
 </web-app>

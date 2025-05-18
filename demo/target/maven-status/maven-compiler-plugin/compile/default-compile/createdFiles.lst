@@ -18,5 +18,6 @@ controller\TestDB.class
 model\dao\DBManager.class
 model\dao\OrderDAO.class
 controller\PaymentServlet.class
+controller\AdminUserServlet.class
 model\User.class
 controller\Validator.class

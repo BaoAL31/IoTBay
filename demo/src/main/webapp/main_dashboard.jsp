@@ -2,6 +2,14 @@
 <%@ page import="model.*" %>
 <%@ page import="model.dao.*" %>
 <%@ page import="java.util.*" %>
+<%
+    User loggedUser = (User) session.getAttribute("loggedUser");
+
+    if (loggedUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,7 +17,7 @@
 </head>
 <body>
     <h1>Main Dashboard</h1>
-    <p>Logged in as: ${user.email}</p>
+    <p>Logged in as: <%= loggedUser.getFullName() %> </p>
     <a href="logout.jsp">Logout</a>
 
     <h2>Device Catalogue</h2>

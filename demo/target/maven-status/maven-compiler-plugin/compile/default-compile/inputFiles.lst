@@ -8,6 +8,7 @@ D:\ISDNEW\IoTBay\demo\src\main\java\controller\LoginServlet.java
 D:\ISDNEW\IoTBay\demo\src\main\java\controller\Validator.java
 D:\ISDNEW\IoTBay\demo\src\main\java\model\dao\UserDAO.java
 D:\ISDNEW\IoTBay\demo\src\main\java\model\dao\PaymentDAO.java
+D:\ISDNEW\IoTBay\demo\src\main\java\controller\AdminUserServlet.java
 D:\ISDNEW\IoTBay\demo\src\main\java\model\dao\DeviceDAO.java
 D:\ISDNEW\IoTBay\demo\src\main\java\model\Delivery.java
 D:\ISDNEW\IoTBay\demo\src\main\java\model\dao\DB.java
