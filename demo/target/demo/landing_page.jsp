@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>IoTBay - Home</title>
-    <link rel="stylesheet" type="text/css" href="css/global.css" />
+    <link rel="stylesheet" type="text/css" href="css/global.css">
     <link rel="stylesheet" type="text/css" href="css/landing.css" />
 </head>
 <body>

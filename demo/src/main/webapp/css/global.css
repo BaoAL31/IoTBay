@@ -43,36 +43,19 @@ textarea {
 }
 
 button, input[type="submit"] {
-    width: 100%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    margin-top: 24px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover, input[type="submit"]:hover {
-    background-color: #45a049;
-}
-
-button:active, input[type="submit"]:active {
-    background-color: #3d8b40;
-    transform: scale(0.98);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
 }
 
 a {
-    color: #4CAF50;
+    color: #3b82f6; /* Primary blue */
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 a:hover {
-    text-decoration: underline;
+    color: #063784; 
 }
 
 .centered {
