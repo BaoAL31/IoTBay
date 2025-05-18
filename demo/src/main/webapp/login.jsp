@@ -7,15 +7,6 @@
     <title>IoTBay - Login</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/login.css">
-    <style>
-        a {
-            color: red !important;
-        }
-        a:hover {
-            color: purple !important;
-        }
-
-    </style>
 </head>
 <body>
     <div class="form-container">

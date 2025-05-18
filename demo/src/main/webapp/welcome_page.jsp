@@ -9,20 +9,28 @@
     }
 %>
 <html>
+<link rel="stylesheet" href="css/global.css" />
+<link rel="stylesheet" href="css/welcome.css" />
 <head>
     <title>Welcome</title>
 </head>
 <body>
-    <h2>Welcome, <%= loggedUser.getFullName() %>!</h2>
-    <p>You are logged in as: <strong><%= loggedUser.getFullName() %></strong></p>
 
-    <% if ("admin".equals(loggedUser.getUserType())) { %>
-        <p><a href="adminDashboard.jsp">Go to Admin Dashboard</a></p>
-    <% } else { %>
-        <p><a href="UserProfileServlet?action=view&userID=<%= loggedUser.getUserID() %>">View My Profile</a></p><br><br>
-        <p><a href="main_dashboard.jsp">View Products</a></p>
-    <% } %>
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <h2>Welcome, <%= loggedUser.getFullName() %>!</h2>
+            <p class="subtitle">You are logged in as: <strong><%= loggedUser.getUserType() %></strong></p>
 
-    <p><a href="logout.jsp">Logout</a></p>
+            <% if ("admin".equals(loggedUser.getUserType())) { %>
+                <a class="btn" href="adminDashboard.jsp">Go to Admin Dashboard</a>
+            <% } else { %>
+                <a class="btn" href="UserProfileServlet?action=view&userID=<%= loggedUser.getUserID() %>">View My Profile</a>
+                <a class="btn" href="main_dashboard.jsp">View Products</a>
+            <% } %>
+
+            <a class="btn btn-secondary" href="logout.jsp">Logout</a>
+        </div>
+    </div>
+
 </body>
 </html>

@@ -7,9 +7,6 @@
     <title>IoTBay - Login</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/login.css">
-    <style>
-
-    </style>
 </head>
 <body>
     <div class="form-container">

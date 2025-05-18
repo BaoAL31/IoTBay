@@ -64,7 +64,7 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("loggedUser", userByEmail);
 
             if ("admin".equals(userByEmail.getUserType())) {
-                response.sendRedirect("adminDashboard.jsp");
+                response.sendRedirect("welcome_page.jsp");
             } else {
                 response.sendRedirect("welcome_page.jsp");
             }
