@@ -9,6 +9,7 @@ public class Validator implements Serializable {
     private final String emailPattern = "([a-zA-Z0-9]+)(([._-])([a-zA-Z0-9]+))*(@)([a-z]+)(.)([a-z]{3})((([.])[a-z]{0,2})*)";
     private final String namePattern = "([A-Z][a-z]+[\\s])+[A-Z][a-z]*";
     private final String passwordPattern = "[a-zA-Z0-9]{4,}";  //allows uppercase, lowercase, digits
+    private final String cardPattern = "^[0-9]{13,19}$";
 
     public Validator() {}
 
@@ -33,4 +34,9 @@ public class Validator implements Serializable {
     public boolean validatePassword(String password) {
         return validate(passwordPattern, password);
     }
+
+    public boolean validateCardNumber(String cardNumber) {
+        return validate(cardPattern, cardNumber);
+    }
+
 }

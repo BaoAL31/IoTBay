@@ -60,8 +60,7 @@ public class OrderServlet extends HttpServlet {
                     break;
                 case "submit":
                     // orderDAO.updateOrderStatus(orderId, "submitted");
-                    request.setAttribute("orderId", orderId); // Set orderId as request attribute
-                    request.getRequestDispatcher("make_payment.jsp").forward(request, response);
+                    response.sendRedirect("make_payment.jsp?orderId=" + orderId);
                     break;
                 default:
                     throw new ServletException("Invalid action: " + action);

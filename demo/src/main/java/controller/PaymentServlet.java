@@ -1,6 +1,9 @@
 package controller;
 
 import model.Payment;
+import model.User;
+import model.dao.DeviceDAO;
+import model.dao.OrderDAO;
 import model.dao.PaymentDAO;
 
 import jakarta.servlet.*;
@@ -10,65 +13,46 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class PaymentServlet extends HttpServlet {
-    private PaymentDAO paymentDAO;
 
     @Override
-    public void init() throws ServletException {
-        Connection conn = (Connection) getServletContext().getAttribute("dbConnection");
-        paymentDAO = new PaymentDAO(conn);
-    }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Validator validator = new Validator();
+        OrderDAO orderDAO = (OrderDAO) session.getAttribute("orderDAO");
+        PaymentDAO paymentDAO = (PaymentDAO) session.getAttribute("paymentDAO");
+
         String action = request.getParameter("action");
+        int orderId = Integer.parseInt(request.getParameter("orderId"));
+        double totalAmount = Double.parseDouble(request.getParameter("totalAmount"));
 
         try {
             switch (action) {
-                case "create":
-                    createPayment(request, response);
+                case "checkout":
+                    String method = request.getParameter("method");
+                    String cardNumber = request.getParameter("cardNumber");
+                    String status = "submitted";
+                    if (!validator.validateCardNumber(cardNumber)) {
+                        session.setAttribute("errorMsg", "Invalid card number format.");
+                        response.sendRedirect("make_payment.jsp?orderId=" + orderId);
+                        return;
+                    }
+                    paymentDAO.createPayment(orderId, method, cardNumber, totalAmount, status);
+                    orderDAO.updateOrderStatus(orderId, "submitted");
+                    response.sendRedirect("main_dashboard.jsp");
                     break;
-                case "update":
-                    updatePayment(request, response);
+
+                case "cancel":
+                    response.sendRedirect("order.jsp");
                     break;
-                case "delete":
-                    deletePayment(request, response);
-                    break;
+
                 default:
-                    response.sendRedirect("payment.jsp");
+                    throw new ServletException("Unknown action: " + action);
             }
-        } catch (SQLException e) {
-            throw new ServletException(e);
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
         }
     }
 
-    private void createPayment(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        int orderId = Integer.parseInt(request.getParameter("orderId"));
-        String method = request.getParameter("method");
-        String cardNumber = request.getParameter("cardNumber");
-        double amount = Double.parseDouble(request.getParameter("amount"));
-
-        Payment payment = new Payment(0, orderId, method, cardNumber, amount, null, "draft");
-        paymentDAO.createPayment(payment);
-
-        response.sendRedirect("payment.jsp");
-    }
-
-    private void updatePayment(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        int paymentId = Integer.parseInt(request.getParameter("paymentId"));
-        String method = request.getParameter("method");
-        String cardNumber = request.getParameter("cardNumber");
-        double amount = Double.parseDouble(request.getParameter("amount"));
-
-        Payment payment = new Payment(paymentId, 0, method, cardNumber, amount, null, "draft");
-        paymentDAO.updatePayment(payment);
-
-        response.sendRedirect("payment.jsp");
-    }
-
-    private void deletePayment(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        int paymentId = Integer.parseInt(request.getParameter("paymentId"));
-        paymentDAO.deletePayment(paymentId);
-
-        response.sendRedirect("payment.jsp");
-    }
 }

@@ -80,32 +80,21 @@ public class PaymentDAO {
     }
 
     // Create a new payment
-    public void createPayment(Payment payment) throws SQLException {
-        String sql = "INSERT INTO Payment (order_id, method, card_number, amount, status) VALUES (?, ?, ?, ?, 'draft')";
+    public void createPayment(int orderId, String method, String cardNumber, double amount, String status) throws SQLException {
+        String sql = "INSERT INTO Payment (order_id, method, card_number, amount, status) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, payment.getOrderId());
-            ps.setString(2, payment.getMethod());
-            ps.setString(3, payment.getCardNumber());
-            ps.setDouble(4, payment.getAmount());
-            ps.executeUpdate();
-        }
-    }
-
-    // Update an existing payment
-    public void updatePayment(Payment payment) throws SQLException {
-        String sql = "UPDATE Payment SET method = ?, card_number = ?, amount = ? WHERE payment_id = ? AND status = 'draft'";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, payment.getMethod());
-            ps.setString(2, payment.getCardNumber());
-            ps.setDouble(3, payment.getAmount());
-            ps.setInt(4, payment.getPaymentId());
+            ps.setInt(1, orderId);
+            ps.setString(2, method);
+            ps.setString(3, cardNumber);
+            ps.setDouble(4, amount);
+            ps.setString(5, status);
             ps.executeUpdate();
         }
     }
 
     // Delete a payment
     public void deletePayment(int paymentId) throws SQLException {
-        String sql = "DELETE FROM Payment WHERE payment_id = ? AND status = 'draft'";
+        String sql = "DELETE FROM Payment WHERE payment_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, paymentId);
             ps.executeUpdate();
