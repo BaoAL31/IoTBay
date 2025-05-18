@@ -41,6 +41,28 @@ public class DBManager {
         }
         return null;
     }
+
+    public User findUserByEmail(String email) throws SQLException {
+        String query = "SELECT * FROM User WHERE email = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, email);
+        ResultSet rs = stmt.executeQuery();
+    
+        if (rs.next()) {
+            User user = new User();
+            user.setUserID(rs.getInt("user_id"));
+            user.setFullName(rs.getString("full_name"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            user.setPhoneNumber(rs.getString("phone"));
+            user.setAddress(rs.getString("address"));
+            user.setUserType(rs.getString("user_type"));
+            return user;
+        }
+    
+        return null;
+    }
+    
     
 
 

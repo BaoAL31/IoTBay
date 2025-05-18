@@ -2,8 +2,6 @@ package controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -20,24 +18,19 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1- retrieve session
         HttpSession session = request.getSession();
         Validator validator = new Validator();
 
-        // 2- get email and password from form
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        // 3- get DBManager from session
         DBManager manager = (DBManager) session.getAttribute("manager");
-
-        System.out.println("LoginServlet.doPost() called");
 
         if (manager == null) {
             throw new ServletException("DBManager not found in session");
         }
 
-        // 4- validation
+        // Validate email and password format
         if (!validator.validateEmail(email)) {
             session.setAttribute("errorMsg", "Invalid email format.");
             response.sendRedirect("login.jsp");
@@ -51,28 +44,93 @@ public class LoginServlet extends HttpServlet {
         }
 
         try {
-            User user = manager.findUser(email, password);
+            // Step 1: Find user by email only
+            User userByEmail = manager.findUserByEmail(email);
 
-            if (user != null) {
-                // Store logged user with full info (including userType)
-                session.setAttribute("loggedUser", user);
-
-                System.out.println("Login success. User role: " + user.getUserType());
-
-                // Optionally: redirect based on role
-                if ("admin".equals(user.getUserType())) {
-                    response.sendRedirect("adminDashboard.jsp");
-                } else {
-                    response.sendRedirect("welcome_page.jsp");
-                }
-            } else {
+            if (userByEmail == null) {
                 session.setAttribute("errorMsg", "User does not exist.");
                 response.sendRedirect("login.jsp");
+                return;
             }
 
-        } catch (SQLException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServletException("Database error during login", ex);
+            // Step 2: Check password match
+            if (!userByEmail.getPassword().equals(password)) {
+                session.setAttribute("errorMsg", "Incorrect password.");
+                response.sendRedirect("login.jsp");
+                return;
+            }
+
+            // Login successful
+            session.setAttribute("loggedUser", userByEmail);
+
+            if ("admin".equals(userByEmail.getUserType())) {
+                response.sendRedirect("adminDashboard.jsp");
+            } else {
+                response.sendRedirect("welcome_page.jsp");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Database error during login", e);
         }
     }
+
+    // protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    //         throws ServletException, IOException {
+
+    //     // 1- retrieve session
+    //     HttpSession session = request.getSession();
+    //     Validator validator = new Validator();
+
+    //     // 2- get email and password from form
+    //     String email = request.getParameter("email");
+    //     String password = request.getParameter("password");
+
+    //     // 3- get DBManager from session
+    //     DBManager manager = (DBManager) session.getAttribute("manager");
+
+    //     System.out.println("LoginServlet.doPost() called");
+
+    //     if (manager == null) {
+    //         throw new ServletException("DBManager not found in session");
+    //     }
+
+    //     // 4- validation
+    //     if (!validator.validateEmail(email)) {
+    //         session.setAttribute("errorMsg", "Invalid email format.");
+    //         response.sendRedirect("login.jsp");
+    //         return;
+    //     }
+
+    //     if (!validator.validatePassword(password)) {
+    //         session.setAttribute("errorMsg", "Invalid password format.");
+    //         response.sendRedirect("login.jsp");
+    //         return;
+    //     }
+
+    //     try {
+    //         User user = manager.findUser(email, password);
+
+    //         if (user != null) {
+    //             // Store logged user with full info (including userType)
+    //             session.setAttribute("loggedUser", user);
+
+    //             System.out.println("Login success. User role: " + user.getUserType());
+
+    //             // Optionally: redirect based on role
+    //             if ("admin".equals(user.getUserType())) {
+    //                 response.sendRedirect("adminDashboard.jsp");
+    //             } else {
+    //                 response.sendRedirect("welcome_page.jsp");
+    //             }
+    //         } else {
+    //             session.setAttribute("errorMsg", "User does not exist.");
+    //             response.sendRedirect("login.jsp");
+    //         }
+
+    //     } catch (SQLException ex) {
+    //         Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+    //         throw new ServletException("Database error during login", ex);
+    //     }
+    // }
 }

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.User;
 import model.dao.UserDAO;
 
+// Uncomment if not using web.xml
 // @WebServlet("/AdminUserServlet")
 public class AdminUserServlet extends HttpServlet {
 
@@ -26,18 +27,21 @@ public class AdminUserServlet extends HttpServlet {
             String address = request.getParameter("address");
             String userType = request.getParameter("user_type");
 
-            System.out.println("AdminUserServlet received role: " + userType);
-
             User newUser = new User(name, email, password, phone, address);
-            newUser.setUserType(userType); // Make sure your User class has this field
-
-            System.out.println("User object set role: " + newUser.getUserType());
+            newUser.setUserType(userType);
 
             UserDAO userDAO = new UserDAO();
-            userDAO.createUser(newUser);
-        }
+            boolean created = userDAO.createUser(newUser);
 
-        response.sendRedirect("adminDashboard.jsp");
+            if (created) {
+                request.setAttribute("message", "User added successfully.");
+            } else {
+                request.setAttribute("error", "Failed to add user.");
+            }
+
+            // Forward or redirect after add
+            response.sendRedirect("adminDashboard.jsp");
+        }
     }
 
     @Override
@@ -45,13 +49,15 @@ public class AdminUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        int userId = Integer.parseInt(request.getParameter("userId"));
 
         if ("delete".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
             UserDAO userDAO = new UserDAO();
             userDAO.deleteUser(userId);
+            response.sendRedirect("adminDashboard.jsp");
+        } else {
+            // Default fallback
+            response.sendRedirect("adminDashboard.jsp");
         }
-
-        response.sendRedirect("adminDashboard.jsp");
     }
 }

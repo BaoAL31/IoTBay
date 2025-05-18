@@ -49,6 +49,9 @@ public class UserProfileServlet extends HttpServlet {
                     // Process user profile update
                     updateUser(request, response, userDAO);
                     break;
+                case "delete":
+                    deleteUser(request, response, userDAO);
+                    break;
                 default:
                     // If action is unrecognized, throw an error
                     throw new ServletException("Invalid action: " + action);
@@ -226,6 +229,22 @@ public class UserProfileServlet extends HttpServlet {
         request.setAttribute("user", user);
         request.getRequestDispatcher("editUserProfile.jsp").forward(request, response);
     }
+
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
+        throws ServletException, IOException, SQLException {
+
+        int userID = Integer.parseInt(request.getParameter("userID"));
+        boolean deleted = userDAO.deleteUser(userID);
+
+        if (deleted) {
+            request.getSession().invalidate(); // logout the user
+            response.sendRedirect("login.jsp");
+        } else {
+            request.setAttribute("error", "Failed to delete account.");
+            viewUser(request, response, userDAO); // reuse existing view method
+        }
+    }
+
 
 
     /**

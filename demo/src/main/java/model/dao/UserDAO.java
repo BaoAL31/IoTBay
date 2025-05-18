@@ -223,5 +223,63 @@ public class UserDAO {
         }
     }
 
+    public List<User> getUsersByType(String type) {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM User WHERE user_type = ?";
+        try {
+            DBConnector db = new DBConnector();
+            Connection conn = db.openConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, type);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                User u = new User();
+                u.setUserID(rs.getInt("user_id"));
+                u.setFullName(rs.getString("full_name"));
+                u.setEmail(rs.getString("email"));
+                u.setPassword(rs.getString("password"));
+                u.setPhoneNumber(rs.getString("phone"));
+                u.setAddress(rs.getString("address"));
+                u.setUserType(rs.getString("user_type"));
+                users.add(u);
+            }
+            db.closeConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return users;
+    }    
 
+    public List<User> searchUsersByName(String name) {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM User WHERE LOWER(full_name) LIKE ?";
+    
+        try {
+            DBConnector db = new DBConnector();
+            Connection conn = db.openConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, "%" + name.toLowerCase() + "%");
+    
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                User user = new User();
+                user.setUserID(rs.getInt("user_id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setPhoneNumber(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+                user.setUserType(rs.getString("user_type"));
+                users.add(user);
+            }
+    
+            db.closeConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+        return users;
+    }
+    
 }

@@ -26,6 +26,14 @@
             <input type="submit" value="Edit Profile"/>
         </form>
 
+        <form action="UserProfileServlet" method="post" onsubmit="return confirm('Are you sure you want to delete your account?');">
+            <input type="hidden" name="action" value="delete" />
+            <input type="hidden" name="userID" value="<%= user.getUserID() %>" />
+            <input type="submit" value="Delete Account" style="color: red;" />
+        </form>
+
+
+
         <a href="welcome_page.jsp">Back to Home</a>
 
     <%
