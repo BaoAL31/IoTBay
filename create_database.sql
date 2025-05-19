@@ -128,3 +128,8 @@ INSERT INTO PaymentItem (payment_id, order_item_id, amount) VALUES
 
 ALTER TABLE User ADD address VARCHAR(255);
 
+ALTER TABLE User ADD user_type VARCHAR(255);
+
+INSERT INTO `User` (full_name, email, password, phone, created_at, address, user_type) VALUES
+  ('Admin', 'admin@iotbay.com', 'admin123', '0411111111', '2025-04-15 11:05:00', '123, Example St., Sydney', 'admin');
+
