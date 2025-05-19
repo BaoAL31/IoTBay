@@ -118,10 +118,14 @@ public class UserProfileServlet extends HttpServlet {
         String password = request.getParameter("password");
         String phone = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
+        String userType = request.getParameter("user_type");
+        if (userType == null || userType.isEmpty()) {
+            userType = "user";
+        }
 
         System.out.println("Received values: " + name + ", " + email + ", " + phone);
 
-        User user = new User(name, email, password, phone, address);
+        User user = new User(name, email, password, phone, address, userType);
 
         boolean created = userDAO.createUser(user);
 
@@ -154,12 +158,16 @@ public class UserProfileServlet extends HttpServlet {
         String password = request.getParameter("password");
         String phone = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
+        String userType = request.getParameter("user_type");
+        if (userType == null || userType.isEmpty()) {
+            userType = "user"; // fallback just in case
+        }
 
         // Get the logged-in user from session
         User loggedUser = (User) session.getAttribute("loggedUser");
 
         // Create the updated user object
-        User updatedUser = new User(name, email, password, phone, address);
+        User updatedUser = new User(name, email, password, phone, address, userType);
         updatedUser.setUserID(userID);
 
         // Update the database

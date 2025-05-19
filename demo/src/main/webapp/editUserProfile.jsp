@@ -3,37 +3,45 @@
 <%
     User user = (User) request.getAttribute("user");
 %>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Edit User Profile</title>
+    <link rel="stylesheet" type="text/css" href="css/global.css">
+    <link rel="stylesheet" type="text/css" href="css/edit_profile.css">
 </head>
 <body>
-    <h2>Edit Profile</h2>
+    <div class="edit-profile-container">
+        <div class="edit-profile-card">
+            <h2>Edit Profile</h2>
+            <form action="UserProfileServlet" method="post">
+                <input type="hidden" name="action" value="update"/>
+                <input type="hidden" name="userID" value="<%= user.getUserID() %>"/>
 
-    <form action="UserProfileServlet" method="post">
-        <input type="hidden" name="action" value="update"/>
-        <input type="hidden" name="userID" value="<%= user.getUserID() %>"/>
+                <label>Name:</label>
+                <input type="text" name="name" value="<%= user.getFullName() %>" required/>
 
-        <label>Name:</label><br/>
-        <input type="text" name="name" value="<%= user.getFullName() %>" required/><br/><br/>
+                <label>Email:</label>
+                <input type="email" name="email" value="<%= user.getEmail() %>" required/>
 
-        <label>Email:</label><br/>
-        <input type="email" name="email" value="<%= user.getEmail() %>" required/><br/><br/>
+                <label>Password:</label>
+                <input type="password" name="password" value="<%= user.getPassword() %>" required/>
 
-        <label>Password:</label><br/>
-        <input type="password" name="password" value="<%= user.getPassword() %>" required/><br/><br/>
+                <label>Phone Number:</label>
+                <input type="text" name="phoneNumber" value="<%= user.getPhoneNumber() %>" required/>
 
-        <label>Phone Number:</label><br/>
-        <input type="text" name="phoneNumber" value="<%= user.getPhoneNumber() %>" required/><br/><br/>
+                <label>Address:</label>
+                <input type="text" name="address" value="<%= user.getAddress() %>" required/>
 
-        <label>Address:</label><br/>
-        <input type="text" name="address" value="<%= user.getAddress() %>" required/><br/><br/>
-
-        <input type="submit" value="Update Profile"/>
-    </form>
-
-    <p style="color:red;">
-        ${error != null ? error : ""}
-    </p>
+                <div class="button-group">
+                    <button type="submit" class="btn">Update Profile</button>
+                    <a href="UserProfileServlet?action=view&userID=<%= user.getUserID() %>" class="btn-cancel">Cancel</a>
+                </div>
+            </form>
+            <p class="error-message">
+                ${error != null ? error : ""}
+            </p>
+        </div>
+    </div>
 </body>
 </html>

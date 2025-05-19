@@ -81,6 +81,7 @@
 
             <label for="address">Address:</label>
             <input type="text" name="address" id="address" required/>
+            <input type="hidden" name="user_type" value="user" />
 
             <input type="submit" class="btn" value="Register"/>
         </form>

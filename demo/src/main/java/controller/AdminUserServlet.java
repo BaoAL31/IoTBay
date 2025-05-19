@@ -27,7 +27,7 @@ public class AdminUserServlet extends HttpServlet {
             String address = request.getParameter("address");
             String userType = request.getParameter("user_type");
 
-            User newUser = new User(name, email, password, phone, address);
+            User newUser = new User(name, email, password, phone, address, userType);
             newUser.setUserType(userType);
 
             UserDAO userDAO = new UserDAO();

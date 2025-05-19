@@ -12,12 +12,13 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String fullName, String email, String password, String phoneNumber, String address) {
+    public User(String fullName, String email, String password, String phoneNumber, String address, String userType) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.userType = userType;
     }
 
     // Getters and setters
