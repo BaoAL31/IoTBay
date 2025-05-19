@@ -32,13 +32,12 @@ public class PaymentServlet extends HttpServlet {
                 case "checkout":
                     String method = request.getParameter("method");
                     String cardNumber = request.getParameter("cardNumber");
-                    String status = "submitted";
                     if (!validator.validateCardNumber(cardNumber)) {
                         session.setAttribute("errorMsg", "Invalid card number format.");
                         response.sendRedirect("make_payment.jsp?orderId=" + orderId);
                         return;
                     }
-                    paymentDAO.createPayment(orderId, method, cardNumber, totalAmount, status);
+                    paymentDAO.createPayment(orderId, method, cardNumber, totalAmount, "completed");
                     orderDAO.updateOrderStatus(orderId, "submitted");
                     response.sendRedirect("main_dashboard.jsp");
                     break;
