@@ -75,7 +75,7 @@
       </div>
 
       <button type="submit" name="action" class="submit-btn" value="checkout">Checkout</button>
-      <button type="button" name="action" class="cancel-btn" value="cancel">Cancel</button>
+      <a href="order.jsp" class="cancel-btn">Cancel</a>
     </form>
 
     <% 

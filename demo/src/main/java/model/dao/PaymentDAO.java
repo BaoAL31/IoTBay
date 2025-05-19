@@ -100,4 +100,18 @@ public class PaymentDAO {
             ps.executeUpdate();
         }
     }
+
+    // Get order_id by payment_id
+    public Integer getOrderIdByPaymentId(int paymentId) throws SQLException {
+        String sql = "SELECT order_id FROM payment WHERE payment_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, paymentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("order_id");
+                }
+            }
+        }
+        return null;
+    }
 }
