@@ -9,16 +9,19 @@ import java.util.List;
 
 import model.User;
 
+// Data Access Object for User-related database operations
 public class UserDAO {
 
-    // Inserts a new user into the database
+    // Inserts a new user into the database and sets the generated userID on the User object
     public boolean createUser(User user) {
+        // SQL with placeholders for prepared statement
         String sql = "INSERT INTO User (full_name, email, password, phone, address, user_type) VALUES (?, ?, ?, ?, ?, ?)";
     
         try {
             DBConnector db = new DBConnector();
-            Connection conn = db.openConnection();
+            Connection conn = db.openConnection();  // open DB connection
     
+            // Request auto-generated keys so we can retrieve the new user_id
             PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             stmt.setString(1, user.getFullName());
             stmt.setString(2, user.getEmail());
@@ -27,41 +30,41 @@ public class UserDAO {
             stmt.setString(5, user.getAddress());
             stmt.setString(6, user.getUserType());
     
-            int affectedRows = stmt.executeUpdate();
+            int affectedRows = stmt.executeUpdate();  // execute insert
     
             if (affectedRows > 0) {
+                // retrieve the generated primary key
                 ResultSet keys = stmt.getGeneratedKeys();
                 if (keys.next()) {
                     int id = keys.getInt(1);
-                    user.setUserID(id); //Set the correct user ID
+                    user.setUserID(id);            // update User object
                     System.out.println("Generated user_id = " + id);
                 }
             }
     
-            db.closeConnection();
+            db.closeConnection();  // close connection
             return affectedRows > 0;
     
         } catch (ClassNotFoundException | SQLException e) {
+            // on error, return false
             return false;
         }
     }
     
-    
-
-    // Retrieves a user from the database using their user_id
+    // Retrieves a user by its ID, or null if not found/ERROR
     public User getUserById(int userID) {
         String sql = "SELECT * FROM User WHERE user_id = ?";
 
         try {
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
-
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userID);
+            stmt.setInt(1, userID);              // bind ID parameter
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                // map result set to User object
                 User user = new User();
                 user.setUserID(rs.getInt("user_id"));
                 user.setFullName(rs.getString("full_name"));
@@ -78,27 +81,27 @@ public class UserDAO {
             db.closeConnection();
 
         } catch (ClassNotFoundException | SQLException e) {
+            // on error, return null
             return null;
         }
 
-        return null;
+        return null;  // no matching user
     }
 
-    // Updates user details
+    // Updates existing user details; returns true if at least one row was updated
     public boolean updateUser(User user) {
         String sql = "UPDATE User SET full_name=?, email=?, password=?, phone=?, address=? WHERE user_id=?";
 
         try {
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
-
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getFullName());
             stmt.setString(2, user.getEmail());
             stmt.setString(3, user.getPassword());
             stmt.setString(4, user.getPhoneNumber());
             stmt.setString(5, user.getAddress());
-            stmt.setInt(6, user.getUserID());
+            stmt.setInt(6, user.getUserID());     // specify which user to update
 
             boolean result = stmt.executeUpdate() > 0;
             db.closeConnection();
@@ -109,14 +112,13 @@ public class UserDAO {
         }
     }
 
-    // Deletes a user
+    // Deletes a user by ID
     public boolean deleteUser(int userID) {
         String sql = "DELETE FROM User WHERE user_id = ?";
 
         try {
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
-
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userID);
 
@@ -129,28 +131,29 @@ public class UserDAO {
         }
     }
 
-    // Checks if user_id exists
+    // Checks if a user ID exists in the database
     public boolean userIdExists(int userID) {
         String sql = "SELECT user_id FROM User WHERE user_id = ?";
 
         try {
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
-
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userID);
 
             ResultSet rs = stmt.executeQuery();
-            boolean exists = rs.next();
+            boolean exists = rs.next();  // true if at least one row returned
 
             db.closeConnection();
             return exists;
 
         } catch (ClassNotFoundException | SQLException e) {
+            // return true to prevent usage if error occurs
             return true;
         }
     }
 
+    // Retrieves all users from the database
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM User";
@@ -162,6 +165,7 @@ public class UserDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                // build User object for each row
                 User user = new User();
                 user.setUserID(rs.getInt("user_id"));
                 user.setFullName(rs.getString("full_name"));
@@ -181,7 +185,7 @@ public class UserDAO {
         return users;
     }
 
-    // Add new user (used by admin)
+    // Alias for createUser, used by admin functionality
     public boolean addUser(User user) {
         String sql = "INSERT INTO User (full_name, email, password, phone, address, user_type) VALUES (?, ?, ?, ?, ?, ?)";
         try {
@@ -202,7 +206,7 @@ public class UserDAO {
         }
     }
 
-    // Delete user by ID
+    // Another delete method by ID (duplicate of deleteUser)
     public boolean deleteUserById(int userId) {
         String sql = "DELETE FROM User WHERE user_id = ?";
         try {
@@ -218,6 +222,7 @@ public class UserDAO {
         }
     }
 
+    // Retrieves users filtered by their userType (e.g., only admins or customers)
     public List<User> getUsersByType(String type) {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM User WHERE user_type = ?";
@@ -226,6 +231,7 @@ public class UserDAO {
             Connection conn = db.openConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, type);
+
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 User u = new User();
@@ -245,6 +251,7 @@ public class UserDAO {
         return users;
     }    
 
+    // Searches regular users by name (case-insensitive partial match)
     public List<User> searchUsersByName(String name) {
         List<User> users = new ArrayList<>();
         String query = "SELECT * FROM user WHERE user_type = 'user' AND full_name LIKE ?";
@@ -256,7 +263,6 @@ public class UserDAO {
             stmt.setString(1, "%" + name.toLowerCase() + "%");
     
             ResultSet rs = stmt.executeQuery();
-    
             while (rs.next()) {
                 User user = new User();
                 user.setUserID(rs.getInt("user_id"));
@@ -271,6 +277,7 @@ public class UserDAO {
     
             db.closeConnection();
         } catch (ClassNotFoundException | SQLException e) {
+            // ignore exception, return whatever was found so far
         }
     
         return users;

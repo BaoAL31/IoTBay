@@ -13,24 +13,21 @@ import jakarta.servlet.http.HttpSession;
 import model.User;
 import model.dao.UserDAO;
 
-// Uncomment the following line if you want to use annotations instead of web.xml mapping
-// @WebServlet("/UserProfileServlet")
+// Servlet for handling user profile actions (view, edit, register, delete)
 public class UserProfileServlet extends HttpServlet {
 
     /**
-     * Handles POST requests for operations like registering a new user and updating user profile.
+     * Handles POST requests (register, update, delete).
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Get the current session (or create one if it doesn't exist)
-        HttpSession session = request.getSession();
-        // Retrieve the action parameter to determine which operation to perform
-        String action = request.getParameter("action");
-        System.out.println("UserProfileServlet.doPost() called with action: " + action);
+        HttpSession session = request.getSession();                       // get or create session
+        String action = request.getParameter("action");                   // determine operation
+        System.out.println("doPost action: " + action);
 
-        // Retrieve or create a UserDAO instance and store it in session for reuse
+        // reuse UserDAO in session if available
         UserDAO userDAO = (UserDAO) session.getAttribute("userDAO");
         if (userDAO == null) {
             userDAO = new UserDAO();
@@ -38,44 +35,37 @@ public class UserProfileServlet extends HttpServlet {
         }
 
         try {
-            // Decide operation based on 'action' parameter value
             switch (action) {
                 case "register":
-                    // Process user registration
                     registerUser(request, response, userDAO);
                     break;
                 case "update":
-                    // Process user profile update
                     updateUser(request, response, userDAO);
                     break;
                 case "delete":
                     deleteUser(request, response, userDAO);
                     break;
                 default:
-                    // If action is unrecognized, throw an error
-                    throw new ServletException("Invalid action: " + action);
+                    throw new ServletException("Unknown action: " + action);
             }
         } catch (SQLException ex) {
-            // Log SQL exceptions and wrap them as ServletExceptions
-            Logger.getLogger(UserProfileServlet.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServletException("Database operation failed", ex);
+            Logger.getLogger(UserProfileServlet.class.getName())
+                  .log(Level.SEVERE, null, ex);
+            throw new ServletException("DB error", ex);
         }
     }
 
     /**
-     * Handles GET requests for viewing and editing the user profile.
+     * Handles GET requests (view profile, show edit form).
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Get the current session
         HttpSession session = request.getSession();
-        // Retrieve the 'action' parameter to determine the requested operation
         String action = request.getParameter("action");
-        System.out.println("UserProfileServlet.doGet() called with action: " + action);
+        System.out.println("doGet action: " + action);
 
-        // Retrieve or create a UserDAO instance as needed
         UserDAO userDAO = (UserDAO) session.getAttribute("userDAO");
         if (userDAO == null) {
             userDAO = new UserDAO();
@@ -83,132 +73,112 @@ public class UserProfileServlet extends HttpServlet {
         }
 
         try {
-            // Determine which action to perform based on the 'action' parameter
             switch (action) {
                 case "view":
-                    // Display the user profile
                     viewUser(request, response, userDAO);
                     break;
                 case "edit":
-                    // Display the edit form with current user details
                     showEditForm(request, response, userDAO);
                     break;
                 default:
-                    // Redirect to the home page if action is not recognized
-                    response.sendRedirect("index.jsp");
+                    response.sendRedirect("index.jsp");  // fallback to home
             }
         } catch (SQLException ex) {
-            // Log and re-throw SQL exceptions
-            Logger.getLogger(UserProfileServlet.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServletException("Database fetch failed", ex);
+            Logger.getLogger(UserProfileServlet.class.getName())
+                  .log(Level.SEVERE, null, ex);
+            throw new ServletException("DB fetch failed", ex);
         }
     }
 
     /**
-     * Registers a new user using the data from the registration form.
+     * Register a new user from form data.
      */
     private void registerUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-    throws ServletException, IOException, SQLException {
+            throws ServletException, IOException, SQLException {
 
-        System.out.println("registerUser() STARTED");
-
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
+        // read form fields
+        String name     = request.getParameter("name");
+        String email    = request.getParameter("email");
         String password = request.getParameter("password");
-        String phone = request.getParameter("phoneNumber");
-        String address = request.getParameter("address");
+        String phone    = request.getParameter("phoneNumber");
+        String address  = request.getParameter("address");
         String userType = request.getParameter("user_type");
-
         if (userType == null || userType.isEmpty()) {
-            userType = "user";
+            userType = "user";  // default role
         }
 
-        System.out.println("Received values: " + name + ", " + email + ", " + phone);
+        System.out.println("Registering: " + name + ", " + email);
 
         User user = new User(name, email, password, phone, address, userType);
-
         boolean created = userDAO.createUser(user);
-
-        System.out.println("User created: " + created);
 
         if (created) {
             request.setAttribute("user", user);
-            System.out.println("Forwarding to userProfile.jsp");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         } else {
-            request.setAttribute("error", "Failed to register user.");
-            System.out.println("Forwarding to registerUser.jsp with error");
+            request.setAttribute("error", "Registration failed.");
             request.getRequestDispatcher("registerUser.jsp").forward(request, response);
         }
     }
 
-
     /**
-     * Updates an existing user profile with data from the update form.
+     * Update an existing user's profile.
      */
     private void updateUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-        throws ServletException, IOException, SQLException {
+            throws ServletException, IOException, SQLException {
 
         HttpSession session = request.getSession();
 
-        // Retrieve updated user details from the form
-        int userID = Integer.parseInt(request.getParameter("userID"));
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String phone = request.getParameter("phoneNumber");
+        // read updated fields
+        int userID     = Integer.parseInt(request.getParameter("userID"));
+        String name    = request.getParameter("name");
+        String email   = request.getParameter("email");
+        String password= request.getParameter("password");
+        String phone   = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
-        String userType = request.getParameter("user_type");
+        String userType= request.getParameter("user_type");
         if (userType == null || userType.isEmpty()) {
-            userType = "user"; // fallback just in case
+            userType = "user";
         }
 
-        // Get the logged-in user from session
         User loggedUser = (User) session.getAttribute("loggedUser");
 
-        // Create the updated user object
+        // prepare updated user object
         User updatedUser = new User(name, email, password, phone, address, userType);
         updatedUser.setUserID(userID);
 
-        // Update the database
         boolean updated = userDAO.updateUser(updatedUser);
 
         if (updated) {
             request.setAttribute("user", updatedUser);
 
             if (loggedUser != null && loggedUser.getUserID() == userID) {
-                // This is the currently logged-in user updating their own profile
-                session.setAttribute("loggedUser", updatedUser);  // update session
+                session.setAttribute("loggedUser", updatedUser);  // refresh session data
                 request.setAttribute("message", "Profile updated.");
                 request.getRequestDispatcher("userProfile.jsp").forward(request, response);
             } else {
-                if (updatedUser.getUserType().equals("user")){
-                    // Admin updated another user's profile
-                    response.sendRedirect("adminDashboard.jsp?tab=user");
-                } else {
-                    response.sendRedirect("adminDashboard.jsp?tab=admin");
-                }
+                // admin updating others: redirect based on role
+                String tab = ("user".equals(updatedUser.getUserType())) ? "user" : "admin";
+                response.sendRedirect("adminDashboard.jsp?tab=" + tab);
             }
-
         } else {
-            request.setAttribute("error", "Failed to update profile.");
+            request.setAttribute("error", "Update failed.");
             request.getRequestDispatcher("editUserProfile.jsp").forward(request, response);
         }
     }
 
-
     /**
-     * Retrieves and displays a user's profile based on their userID.
+     * Show a user's profile after permission check.
      */
     private void viewUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-        throws ServletException, IOException, SQLException {
+            throws ServletException, IOException, SQLException {
 
         HttpSession session = request.getSession();
         User loggedUser = (User) session.getAttribute("loggedUser");
-
         int userID = Integer.parseInt(request.getParameter("userID"));
         User user = userDAO.getUserById(userID);
 
+        // allow view only if admin or owner
         if (loggedUser == null || user == null ||
             (!"admin".equals(loggedUser.getUserType()) && loggedUser.getUserID() != userID)) {
             response.sendRedirect("unauthorized.jsp");
@@ -219,16 +189,14 @@ public class UserProfileServlet extends HttpServlet {
         request.getRequestDispatcher("userProfile.jsp").forward(request, response);
     }
 
-
     /**
-     * Retrieves user data for editing and forwards the data to the edit form.
+     * Display edit form with current user data.
      */
     private void showEditForm(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-        throws ServletException, IOException, SQLException {
+            throws ServletException, IOException, SQLException {
 
         HttpSession session = request.getSession();
         User loggedUser = (User) session.getAttribute("loggedUser");
-
         String idParam = request.getParameter("userID");
         if (idParam == null || idParam.isEmpty()) {
             response.sendRedirect("unauthorized.jsp");
@@ -238,6 +206,7 @@ public class UserProfileServlet extends HttpServlet {
         int userID = Integer.parseInt(idParam);
         User user = userDAO.getUserById(userID);
 
+        // check permission
         if (loggedUser == null || user == null ||
             (!"admin".equals(loggedUser.getUserType()) && loggedUser.getUserID() != userID)) {
             response.sendRedirect("unauthorized.jsp");
@@ -248,19 +217,21 @@ public class UserProfileServlet extends HttpServlet {
         request.getRequestDispatcher("editUserProfile.jsp").forward(request, response);
     }
 
-
+    /**
+     * Delete the user and, if successful, invalidate session.
+     */
     private void deleteUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
-        throws ServletException, IOException, SQLException {
+            throws ServletException, IOException, SQLException {
 
         int userID = Integer.parseInt(request.getParameter("userID"));
         boolean deleted = userDAO.deleteUser(userID);
 
         if (deleted) {
-            request.getSession().invalidate(); // logout the user
+            request.getSession().invalidate();   // logout
             response.sendRedirect("login.jsp");
         } else {
-            request.setAttribute("error", "Failed to delete account.");
-            viewUser(request, response, userDAO); // reuse existing view method
+            request.setAttribute("error", "Delete failed.");
+            viewUser(request, response, userDAO);  // show profile again
         }
     }
 }

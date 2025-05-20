@@ -1,18 +1,21 @@
 package model;
 
+// Model class for user accounts in IoTBay
 public class User {
-    private int userID;
-    private String fullName;
-    private String email;
-    private String password;
-    private String phoneNumber;
-    private String address;
-    private String userType;
+    private int userID;          // database primary key
+    private String fullName;     // user’s full name
+    private String email;        // user’s email (used to log in)
+    private String password;     // user’s password (should be hashed)
+    private String phoneNumber;  // contact number
+    private String address;      // mailing address
+    private String userType;     // role: "user" or "admin"
 
-    // Constructors
+    // Default constructor
     public User() {}
 
-    public User(String fullName, String email, String password, String phoneNumber, String address, String userType) {
+    // Constructor without ID (ID set when saved to DB)
+    public User(String fullName, String email, String password,
+                String phoneNumber, String address, String userType) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
@@ -21,11 +24,11 @@ public class User {
         this.userType = userType;
     }
 
-    // Getters and setters
+    // getters and setters
+
     public int getUserID() {
         return userID;
     }
-
     public void setUserID(int userID) {
         this.userID = userID;
     }
@@ -33,7 +36,6 @@ public class User {
     public String getFullName() {
         return fullName;
     }
-
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
@@ -41,7 +43,6 @@ public class User {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -49,7 +50,6 @@ public class User {
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -57,7 +57,6 @@ public class User {
     public String getPhoneNumber() {
         return phoneNumber;
     }
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
@@ -65,7 +64,6 @@ public class User {
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }
@@ -73,7 +71,6 @@ public class User {
     public String getUserType() {
         return userType;
     }
-
     public void setUserType(String userType) {
         this.userType = userType;
     }
