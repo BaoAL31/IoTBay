@@ -10,6 +10,8 @@
     }
 
     DeviceDAO deviceDAO = (DeviceDAO) session.getAttribute("deviceDAO");
+    OrderDAO orderDAO = (OrderDAO) session.getAttribute("orderDAO");
+    session.setAttribute("activeOrderId", orderDAO.findActiveOrderId(loggedUser.getUserID()));
     List<Device> deviceList = deviceDAO.getAllDevices();
 %>
 <!DOCTYPE html>
@@ -30,8 +32,8 @@
             <a href="logout.jsp" class="nav-item">Logout</a>
         </div>
     </nav>
-
-    <h2>Device Catalogue</h2>
+    <%-- TODO: ADD SEARCH BAR AND FILTER --%>
+    <h1>Device Catalogue</h2>
     <table class="device-table">
         <tr>
             <th>Device Name</th>
@@ -40,16 +42,24 @@
             <th>Stock</th>
             <th>Action</th>
         </tr>
-        <% for (Device device : deviceList) { %>
+        <% 
+        for (Device device : deviceList) { 
+        %>
         <tr>
             <td><%= device.getName() %></td>
             <td><%= device.getType() %></td>
             <td>$<%= String.format("%.2f", device.getPrice()) %></td>
             <td><%= device.getStock() %></td>
             <td>
-              <form method="POST" action="CartServlet" style="margin:0;">
-                  <input type="hidden" name="deviceId" value="<%= device.getId() %>"/>
-                  <button type="submit" class="add-to-order-btn">Add to Order</button>
+              <form method="POST" action="OrderServlet">
+                <input type="hidden" name="action" value="add_to_order"/>
+                <input type="hidden" name="deviceId" value="<%= device.getId() %>"/>
+                <button 
+                    type="submit" 
+                    class="add-to-order-btn <%= device.getStock() == 0 ? " disabled" : "" %>"
+                    <%= device.getStock() == 0 ? "disabled" : "" %>>
+                    Add to Order
+                </button>
               </form>
             </td>
         </tr>
