@@ -13,7 +13,7 @@ public class OrderDAO {
     }
 
     public int createOrder(int userId) throws SQLException {
-        String query = "INSERT INTO order (user_id) VALUES (?)";
+        String query = "INSERT INTO `order` (user_id) VALUES (?)";
         try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, userId);
             stmt.executeUpdate();
@@ -22,6 +22,19 @@ public class OrderDAO {
                 return keys.getInt(1);
             }
             throw new SQLException("Order creation failed, no ID obtained.");
+        }
+    }
+
+    // Finds the latest order for a user with status 'DRAFT', returns its ID or -1 if not found
+    public int findActiveOrderId(int userId) throws SQLException {
+        String query = "SELECT order_id FROM `order` WHERE user_id = ? AND status = 'DRAFT' ORDER BY created_at DESC LIMIT 1";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("order_id");
+            }
+            return -1;
         }
     }
 
@@ -51,13 +64,34 @@ public class OrderDAO {
     }
 
     public void addOrderItem(int orderId, Device item, int quantity) throws SQLException {
-        String query = "INSERT INTO OrderItem (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, orderId);
-            stmt.setInt(2, item.getId());
-            stmt.setInt(3, quantity);
-            stmt.setDouble(4, item.getPrice());
-            stmt.executeUpdate();
+        // First, check if the item already exists in the order
+        String checkQuery = "SELECT quantity FROM OrderItem WHERE order_id = ? AND device_id = ?";
+        try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+            checkStmt.setInt(1, orderId);
+            checkStmt.setInt(2, item.getId());
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next()) {
+                    // Item exists, update quantity
+                    int existingQty = rs.getInt("quantity");
+                    String updateQuery = "UPDATE OrderItem SET quantity = ? WHERE order_id = ? AND device_id = ?";
+                    try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                        updateStmt.setInt(1, existingQty + quantity);
+                        updateStmt.setInt(2, orderId);
+                        updateStmt.setInt(3, item.getId());
+                        updateStmt.executeUpdate();
+                    }
+                } else {
+                    // Item does not exist, insert new row
+                    String insertQuery = "INSERT INTO OrderItem (order_id, device_id, quantity, unit_price) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+                        insertStmt.setInt(1, orderId);
+                        insertStmt.setInt(2, item.getId());
+                        insertStmt.setInt(3, quantity);
+                        insertStmt.setDouble(4, item.getPrice());
+                        insertStmt.executeUpdate();
+                    }
+                }
+            }
         }
     }
 
@@ -116,6 +150,29 @@ public class OrderDAO {
             }
         }
         return orderIds;
+    }
+
+    public Device getOrderItem(int orderId, int deviceId) throws SQLException {
+        String sql = "SELECT d.device_id, d.name, d.type, d.unit_price, d.stock " +
+                     "FROM OrderItem oi " +
+                     "JOIN Device d ON oi.device_id = d.device_id " +
+                     "WHERE oi.order_id = ? AND oi.device_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ps.setInt(2, deviceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Device(
+                        rs.getInt("device_id"),
+                        rs.getString("name"),
+                        rs.getString("type"),
+                        rs.getDouble("unit_price"),
+                        rs.getInt("stock")
+                    );
+                }
+            }
+        }
+        return null;
     }
 
     // Returns a list of items in the order with their quantities added to order

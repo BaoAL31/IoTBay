@@ -34,8 +34,8 @@
 <body>
 
     <nav class="navbar">
-        <a href="main_dashboard.jsp" class="nav-item current">Main Dashboard</a>
-        <a href="order.jsp" class="nav-item">View Orders</a>
+        <a href="main_dashboard.jsp" class="nav-item">Main Dashboard</a>
+        <a href="order.jsp" class="nav-item current">View Orders</a>
         <a href="payment_history.jsp" class="nav-item">Payment History</a>
         <div class="nav-right">
             <a href="logout.jsp" class="nav-item">Logout</a>
