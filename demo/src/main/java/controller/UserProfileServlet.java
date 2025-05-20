@@ -119,6 +119,7 @@ public class UserProfileServlet extends HttpServlet {
         String phone = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
         String userType = request.getParameter("user_type");
+
         if (userType == null || userType.isEmpty()) {
             userType = "user";
         }

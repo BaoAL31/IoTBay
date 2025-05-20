@@ -1,0 +1,59 @@
+/* Base page styles */
+body {
+    padding-top: 12vh;
+}
+
+/* Content wrapper to push below navbar */
+.main-content {
+    padding: 20px;
+}
+
+/* “Card” container similar to .order-block */
+.device-block {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styling borrowed from .order-table */
+.device-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-top: 10px;
+}
+
+.device-table th,
+.device-table td {
+    padding: 8px 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.device-table th {
+    background: #007bff;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.device-table tr:nth-child(even) {
+    background: #f9fbfc;
+}
+
+/* Add-to-cart button */
+.add-to-order-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.add-to-order-btn:hover {
+    background: #0056b3;
+}

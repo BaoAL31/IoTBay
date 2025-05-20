@@ -82,7 +82,8 @@ public class OrderDAO {
 
     public List<Integer> getOrderIdsByStatusAndSearchQuery(int userId, String status, String searchQueryId,
             String searchQueryDate) throws SQLException {
-
+        System.out.println("getOrderIdsByStatusAndSearchQuery: userId=" + userId + ", status=" + status + ", searchQueryId="
+                + searchQueryId + ", searchQueryDate=" + searchQueryDate);
         String sql = "SELECT order_id FROM `order` WHERE user_id = ? AND status = ?";
 
         boolean hasIdFilter = searchQueryId != null && !searchQueryId.trim().isEmpty();

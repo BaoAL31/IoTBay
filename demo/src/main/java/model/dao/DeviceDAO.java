@@ -32,7 +32,7 @@ public class DeviceDAO {
             while (rs.next()) {
                 devices.add(new Device(
                         rs.getInt("device_id"),
-                        rs.getString("device_name"),
+                        rs.getString("name"),
                         rs.getString("type"),
                         rs.getDouble("unit_price"),
                         rs.getInt("stock")));
