@@ -39,8 +39,12 @@ public class AdminUserServlet extends HttpServlet {
                 request.setAttribute("error", "Failed to add user.");
             }
 
-            // Forward or redirect after add
-            response.sendRedirect("adminDashboard.jsp?tab=user");
+            if ("user".equals(userType)) {
+                // Forward or redirect after add
+                response.sendRedirect("adminDashboard.jsp?tab=user");
+            } else {
+                response.sendRedirect("adminDashboard.jsp?tab=admin");
+            }
         }
     }
 
@@ -53,11 +57,24 @@ public class AdminUserServlet extends HttpServlet {
         if ("delete".equals(action)) {
             int userId = Integer.parseInt(request.getParameter("userId"));
             UserDAO userDAO = new UserDAO();
-            userDAO.deleteUser(userId);
-            response.sendRedirect("adminDashboard.jsp?tab=user");
+            User user = userDAO.getUserById(userId); // Get user before deletion
+
+            if (user != null) {
+                userDAO.deleteUser(userId);
+
+                // Redirect to correct tab
+                if ("admin".equalsIgnoreCase(user.getUserType())) {
+                    response.sendRedirect("adminDashboard.jsp?tab=admin");
+                } else {
+                    response.sendRedirect("adminDashboard.jsp?tab=user");
+                }
+            } else {
+                // User not found, default redirect
+                response.sendRedirect("adminDashboard.jsp?tab=user");
+            }
         } else {
-            // Default fallback
             response.sendRedirect("adminDashboard.jsp?tab=user");
         }
     }
+
 }

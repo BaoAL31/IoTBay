@@ -182,8 +182,12 @@ public class UserProfileServlet extends HttpServlet {
                 request.setAttribute("message", "Profile updated.");
                 request.getRequestDispatcher("userProfile.jsp").forward(request, response);
             } else {
-                // Admin updated another user's profile
-                response.sendRedirect("adminDashboard.jsp");
+                if (updatedUser.getUserType().equals("user")){
+                    // Admin updated another user's profile
+                    response.sendRedirect("adminDashboard.jsp?tab=user");
+                } else {
+                    response.sendRedirect("adminDashboard.jsp?tab=admin");
+                }
             }
 
         } else {
