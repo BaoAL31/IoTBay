@@ -62,8 +62,8 @@
 
       <label for="method">Payment Method:</label>
       <select id="method" name="method" required>
-        <option value="credit_card">Credit Card</option>
-        <option value="paypal">PayPal</option>
+        <option value="Credit Card">Credit Card</option>
+        <option value="PayPal">PayPal</option>
       </select>
 
       <label for="cardNumber">Card Number:</label>

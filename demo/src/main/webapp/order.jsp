@@ -11,7 +11,7 @@
     }
     OrderDAO orderDAO   = (OrderDAO) session.getAttribute("orderDAO");
     DeviceDAO deviceDAO = (DeviceDAO) session.getAttribute("deviceDAO");
-    Integer userId = 1; //TODO: Should be retreived from session
+    Integer userId = loggedUser.getUserID(); 
 
 %>
 

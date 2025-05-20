@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import model.*;
 
 public class PaymentDAO {
     private Connection conn;
@@ -52,6 +53,19 @@ public class PaymentDAO {
             }
         }
         return paymentIds;
+    }
+
+    public String getPaidDateByOrderId(int orderId) throws SQLException {
+        String sql = "SELECT paid_at FROM Payment WHERE order_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("paid_at");
+                }
+            }
+        }
+        return null;
     }
 
     // Returns a list of items in the payment with their quantities
@@ -116,4 +130,33 @@ public class PaymentDAO {
         }
         return null;
     }
+    
+    // Get card number by order ID
+    public String getCardNumberByOrderId(int orderId) throws SQLException {
+        String sql = "SELECT card_number FROM Payment WHERE order_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("card_number");
+                }
+            }
+        }
+        return null;
+    }
+
+    // Get payment method by user ID (returns the first found)
+    public String getPaymentMethodByOrderId(int orderId) throws SQLException {
+        String sql = "SELECT method FROM Payment WHERE order_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("method");
+                }
+            }
+        }
+        return null;
+    }
+
 }
