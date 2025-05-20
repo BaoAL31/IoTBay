@@ -3,6 +3,7 @@ package model.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,7 @@ public class UserDAO {
             db.closeConnection();
             return affectedRows > 0;
     
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
             return false;
         }
     }
@@ -77,8 +77,8 @@ public class UserDAO {
 
             db.closeConnection();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
+            return null;
         }
 
         return null;
@@ -104,8 +104,7 @@ public class UserDAO {
             db.closeConnection();
             return result;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
             return false;
         }
     }
@@ -125,8 +124,7 @@ public class UserDAO {
             db.closeConnection();
             return result;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
             return false;
         }
     }
@@ -148,8 +146,7 @@ public class UserDAO {
             db.closeConnection();
             return exists;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
             return true;
         }
     }
@@ -177,8 +174,8 @@ public class UserDAO {
             }
 
             db.closeConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
+            return null;
         }
 
         return users;
@@ -200,8 +197,7 @@ public class UserDAO {
             boolean result = stmt.executeUpdate() > 0;
             db.closeConnection();
             return result;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
             return false;
         }
     }
@@ -217,8 +213,7 @@ public class UserDAO {
             boolean result = stmt.executeUpdate() > 0;
             db.closeConnection();
             return result;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
             return false;
         }
     }
@@ -244,8 +239,8 @@ public class UserDAO {
                 users.add(u);
             }
             db.closeConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
+            return null;
         }
         return users;
     }    
@@ -275,8 +270,7 @@ public class UserDAO {
             }
     
             db.closeConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
         }
     
         return users;
