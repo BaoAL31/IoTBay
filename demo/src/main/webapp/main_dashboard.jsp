@@ -3,17 +3,32 @@
 <%@ page import="model.dao.*" %>
 <%@ page import="java.util.*" %>
 <%
-    User loggedUser = (User) session.getAttribute("loggedUser");
+    model.User loggedUser = (model.User) session.getAttribute("loggedUser");
     if (loggedUser == null) {
         response.sendRedirect("login.jsp");
         return;
     }
 
-    DeviceDAO deviceDAO = (DeviceDAO) session.getAttribute("deviceDAO");
-    OrderDAO orderDAO = (OrderDAO) session.getAttribute("orderDAO");
+    model.dao.DeviceDAO deviceDAO = (model.dao.DeviceDAO) session.getAttribute("deviceDAO");
+    model.dao.OrderDAO orderDAO = (model.dao.OrderDAO) session.getAttribute("orderDAO");
+
+    if (deviceDAO == null || orderDAO == null) {
+        model.dao.DBConnector db = new model.dao.DBConnector();
+        java.sql.Connection conn = db.openConnection();
+        if (deviceDAO == null) {
+            deviceDAO = new model.dao.DeviceDAO(conn);
+            session.setAttribute("deviceDAO", deviceDAO);
+        }
+        if (orderDAO == null) {
+            orderDAO = new model.dao.OrderDAO(conn);
+            session.setAttribute("orderDAO", orderDAO);
+        }
+    }
+
     session.setAttribute("activeOrderId", orderDAO.findActiveOrderId(loggedUser.getUserID()));
-    List<Device> deviceList = deviceDAO.getAllDevices();
+    java.util.List<model.Device> deviceList = deviceDAO.getAllDevices();
 %>
+
 <!DOCTYPE html>
 <html>
 <head>

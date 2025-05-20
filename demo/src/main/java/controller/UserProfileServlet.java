@@ -225,7 +225,13 @@ public class UserProfileServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User loggedUser = (User) session.getAttribute("loggedUser");
 
-        int userID = Integer.parseInt(request.getParameter("userID"));
+        String idParam = request.getParameter("userID");
+        if (idParam == null || idParam.isEmpty()) {
+            response.sendRedirect("unauthorized.jsp");
+            return;
+        }
+
+        int userID = Integer.parseInt(idParam);
         User user = userDAO.getUserById(userID);
 
         if (loggedUser == null || user == null ||
@@ -237,6 +243,7 @@ public class UserProfileServlet extends HttpServlet {
         request.setAttribute("user", user);
         request.getRequestDispatcher("editUserProfile.jsp").forward(request, response);
     }
+
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
         throws ServletException, IOException, SQLException {

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="model.User, model.Device, model.dao.UserDAO, model.dao.DeviceDAO, model.dao.DBConnector, java.util.List" %>
+<%@ page import="model.User, model.Device, model.dao.UserDAO, model.dao.DeviceDAO, model.dao.OrderDAO, model.dao.DBConnector, java.util.List" %>
 <%
     User loggedUser = (User) session.getAttribute("loggedUser");
     if (loggedUser == null || !"admin".equals(loggedUser.getUserType())) {

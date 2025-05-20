@@ -2,7 +2,12 @@
 <%@ page import="model.User" %>
 <%
     User user = (User) request.getAttribute("user");
+    if (user == null) {
+        out.println("<p style='color:red;'>Error: User not loaded properly.</p>");
+        return;
+    }
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
