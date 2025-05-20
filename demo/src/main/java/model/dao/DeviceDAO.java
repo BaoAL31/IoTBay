@@ -1,16 +1,16 @@
 package model.dao;
- 
+
 import model.Device;
 import java.sql.*;
 import java.util.*;
- 
+
 public class DeviceDAO {
     private Connection connection;
- 
+
     public DeviceDAO(Connection connection) {
         this.connection = connection;
     }
- 
+
     // Create a new device (Staff only)
     public void addDevice(Device device) throws SQLException {
         String query = "INSERT INTO device (device_name, type, unit_price, stock) VALUES (?, ?, ?, ?)";
@@ -22,7 +22,7 @@ public class DeviceDAO {
             statement.executeUpdate();
         }
     }
- 
+
     // Read all devices (Accessible to both staff and customers)
     public List<Device> getAllDevices() throws SQLException {
         List<Device> devices = new ArrayList<>();
@@ -40,7 +40,7 @@ public class DeviceDAO {
         }
         return devices;
     }
- 
+
     // Search devices by name and type (Accessible to both staff and customers)
     public List<Device> searchDevices(String name, String type) throws SQLException {
         List<Device> devices = new ArrayList<>();
@@ -60,7 +60,7 @@ public class DeviceDAO {
         }
         return devices;
     }
- 
+
     // Update a device (Staff only)
     public void updateDevice(Device device) throws SQLException {
         String query = "UPDATE device SET device_name = ?, type = ?, unit_price = ?, stock = ? WHERE device_id = ?";
@@ -73,7 +73,7 @@ public class DeviceDAO {
             statement.executeUpdate();
         }
     }
- 
+
     // Delete a device (Staff only)
     public void deleteDevice(int id) throws SQLException {
         String query = "DELETE FROM device WHERE device_id = ?";
@@ -82,7 +82,7 @@ public class DeviceDAO {
             statement.executeUpdate();
         }
     }
- 
+
     public Device getDeviceById(int id) throws SQLException {
         String query = "SELECT * FROM device WHERE device_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -100,7 +100,7 @@ public class DeviceDAO {
         }
         return null; // Return null if no device is found
     }
- 
+
     public int getStock(int deviceId) throws SQLException {
         String query = "SELECT stock FROM Device WHERE device_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -113,7 +113,7 @@ public class DeviceDAO {
             }
         }
     }
- 
+
     public void updateStock(int deviceId, int newStock) throws SQLException {
         String query = "UPDATE device SET stock = ? WHERE device_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
