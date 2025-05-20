@@ -4,9 +4,14 @@
 <%@ page import="java.util.*" %>
 
 <%
+    User loggedUser = (User) session.getAttribute("loggedUser");
+    if (loggedUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
     OrderDAO orderDAO   = (OrderDAO) session.getAttribute("orderDAO");
     DeviceDAO deviceDAO = (DeviceDAO) session.getAttribute("deviceDAO");
-    Integer userId = 1; //TODO: Should be retreived from session
+    Integer userId = loggedUser.getUserID(); 
 
 %>
 
@@ -19,8 +24,8 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="main_dashboard.jsp" class="nav-item current">Main Dashboard</a>
-        <a href="order.jsp" class="nav-item">View Orders</a>
+        <a href="main_dashboard.jsp" class="nav-item">Main Dashboard</a>
+        <a href="order.jsp" class="nav-item current">View Orders</a>
         <a href="payment_history.jsp" class="nav-item">Payment History</a>
         <div class="nav-right">
             <a href="logout.jsp" class="nav-item">Logout</a>
@@ -107,7 +112,7 @@
                     <input type="hidden" name="orderId" value="<%= orderId %>"/>
                     <input type="hidden" name="orderItemId" value="<%= orderItem.getId() %>"/>
                     <input type="hidden" name="quantity" value="<%= quantity %>"/>
-                    <button type="submit" class="qty-btn <%= (status.equals("submitted") || status.equals("cancelled")) ? "disabled" : "" %>">+</button>
+                    <button type="submit" class="qty-btn <%= (status.equals("submitted") || status.equals("cancelled") || orderItem.getStock() == 0) ? "disabled" : "" %>">+</button>
                 </form>
             </div>
             </td>

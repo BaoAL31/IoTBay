@@ -40,7 +40,7 @@ public class AdminUserServlet extends HttpServlet {
             }
 
             // Forward or redirect after add
-            response.sendRedirect("adminDashboard.jsp");
+            response.sendRedirect("adminDashboard.jsp?tab=user");
         }
     }
 
@@ -54,10 +54,10 @@ public class AdminUserServlet extends HttpServlet {
             int userId = Integer.parseInt(request.getParameter("userId"));
             UserDAO userDAO = new UserDAO();
             userDAO.deleteUser(userId);
-            response.sendRedirect("adminDashboard.jsp");
+            response.sendRedirect("adminDashboard.jsp?tab=user");
         } else {
             // Default fallback
-            response.sendRedirect("adminDashboard.jsp");
+            response.sendRedirect("adminDashboard.jsp?tab=user");
         }
     }
 }

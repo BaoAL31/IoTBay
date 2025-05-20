@@ -26,6 +26,7 @@ h2 {
 }
 
 .tab-btn {
+    font-family: 'Poppins', sans-serif;
     padding: 10px 20px;
     margin-right: 5px;
     background-color: #eee;
@@ -40,6 +41,7 @@ h2 {
     background-color: #ffffff;
     border-bottom: 3px solid #4285f4;
     color: #4285f4;
+    font-weight: 600;
 }
 
 .tab-content {
@@ -243,5 +245,25 @@ th {
     margin-top: 20px;
   }
 
-  
-  
+  .text-field {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .modal-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+  .modal-form input[type="text"],
+  .modal-form input[type="email"],
+  .modal-form input[type="password"],
+  .modal-form input[type="number"],
+  .modal-form select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+  }

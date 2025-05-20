@@ -183,3 +183,18 @@ table tr:nth-child(even) {
     /* ensure text stays white */
     cursor: pointer;
 }
+
+button:disabled, button.disabled {
+    cursor: not-allowed;
+    background: #ccc;
+    color: #888;
+    border: 1px solid #bbb;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+button:disabled:hover, button.disabled:hover {
+    cursor: not-allowed;
+    background: #ccc;
+    color: #888;
+}

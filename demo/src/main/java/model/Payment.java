@@ -19,7 +19,6 @@ public class Payment {
         this.cardNumber = cardNumber;
         this.amount = amount;
         this.paidAt = paidAt;
-        this.status = status;
     }
 
     // Getters and Setters

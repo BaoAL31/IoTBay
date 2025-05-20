@@ -1,16 +1,15 @@
 package controller;
 
-import model.Payment;
-import model.User;
-import model.dao.DeviceDAO;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.dao.OrderDAO;
 import model.dao.PaymentDAO;
-
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class PaymentServlet extends HttpServlet {
 

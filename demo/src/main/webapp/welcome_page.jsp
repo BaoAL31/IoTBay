@@ -2,11 +2,11 @@
 <%@ page import="model.User" %>
 <%
     User loggedUser = (User) session.getAttribute("loggedUser");
-
     if (loggedUser == null) {
         response.sendRedirect("login.jsp");
         return;
     }
+    
 %>
 <html>
 <link rel="stylesheet" href="css/global.css" />

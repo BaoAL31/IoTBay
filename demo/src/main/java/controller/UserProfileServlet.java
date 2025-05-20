@@ -2,7 +2,6 @@ package controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -252,20 +251,5 @@ public class UserProfileServlet extends HttpServlet {
             request.setAttribute("error", "Failed to delete account.");
             viewUser(request, response, userDAO); // reuse existing view method
         }
-    }
-
-
-
-    /**
-     * Generates a unique 5-digit user ID by checking the database for duplicates.
-     */
-    private int generateUniqueUserID(UserDAO userDAO) {
-        Random rand = new Random();
-        int userID;
-        // Loop until a generated userID does not exist in the database
-        do {
-            userID = 10000 + rand.nextInt(90000);
-        } while (userDAO.userIdExists(userID));
-        return userID;
     }
 }

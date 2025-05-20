@@ -57,14 +57,6 @@ public class Device {
         this.stock = stock;
     }
 
-    public int getQuantity() {
-        return stock;
-    }
-
-    public void setQuantity(int quantity) {
-        this.stock = quantity;
-    }
-
     // toString method
     @Override
     public String toString() {
