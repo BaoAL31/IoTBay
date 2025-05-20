@@ -32,6 +32,16 @@
     <%-- <link rel="stylesheet" href="css/make_payment.css"> --%>
 </head>
 <body>
+
+    <nav class="navbar">
+        <a href="main_dashboard.jsp" class="nav-item current">Main Dashboard</a>
+        <a href="order.jsp" class="nav-item">View Orders</a>
+        <a href="payment_history.jsp" class="nav-item">Payment History</a>
+        <div class="nav-right">
+            <a href="logout.jsp" class="nav-item">Logout</a>
+        </div>
+    </nav>
+
   <div class="payment-page">
     <h1>Payment Management</h1>
 
