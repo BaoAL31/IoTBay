@@ -32,9 +32,10 @@ public class DeviceListServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String action = request.getParameter("action");
-    
+
         if (action == null || action.trim().isEmpty()) {
             try {
                 listDevices(request, response); // Default action
@@ -44,7 +45,7 @@ public class DeviceListServlet extends HttpServlet {
             }
             return;
         }
-    
+
         try {
             switch (action) {
                 case "delete":
@@ -62,7 +63,6 @@ public class DeviceListServlet extends HttpServlet {
             request.getRequestDispatcher("error.jsp").forward(request, response);
         }
     }
-    
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -71,17 +71,18 @@ public class DeviceListServlet extends HttpServlet {
         try {
             if (null == action) {
                 response.sendRedirect("DeviceListServlet?tab=device");
-            } else switch (action) {
-                case "add":
-                    addDevice(request, response);
-                    break;
-                case "update":
-                    updateDevice(request, response);
-                    break;
-                default:
-                    response.sendRedirect("DeviceListServlet?tab=device");
-                    break;
-            }
+            } else
+                switch (action) {
+                    case "add":
+                        addDevice(request, response);
+                        break;
+                    case "update":
+                        updateDevice(request, response);
+                        break;
+                    default:
+                        response.sendRedirect("DeviceListServlet?tab=device");
+                        break;
+                }
         } catch (ServletException | IOException e) {
             request.setAttribute("errorMessage", "Something went wrong in POST");
             request.getRequestDispatcher("error.jsp").forward(request, response);
@@ -96,7 +97,8 @@ public class DeviceListServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    private void addDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void addDevice(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
             String name = request.getParameter("name");
             String type = request.getParameter("type");
@@ -104,7 +106,8 @@ public class DeviceListServlet extends HttpServlet {
             String stockStr = request.getParameter("stock");
 
             if (name == null || type == null || priceStr == null || stockStr == null ||
-                name.trim().isEmpty() || type.trim().isEmpty() || priceStr.trim().isEmpty() || stockStr.trim().isEmpty()) {
+                    name.trim().isEmpty() || type.trim().isEmpty() || priceStr.trim().isEmpty()
+                    || stockStr.trim().isEmpty()) {
                 request.setAttribute("errorMessage", "All fields are required.");
                 request.getRequestDispatcher("adminDashboard.jsp").forward(request, response);
                 return;
@@ -124,7 +127,7 @@ public class DeviceListServlet extends HttpServlet {
     }
 
     private void updateDevice(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             String name = request.getParameter("name");
