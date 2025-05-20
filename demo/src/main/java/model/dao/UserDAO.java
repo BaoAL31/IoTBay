@@ -247,12 +247,12 @@ public class UserDAO {
 
     public List<User> searchUsersByName(String name) {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM User WHERE LOWER(full_name) LIKE ?";
+        String query = "SELECT * FROM user WHERE user_type = 'user' AND full_name LIKE ?";
     
         try {
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, "%" + name.toLowerCase() + "%");
     
             ResultSet rs = stmt.executeQuery();

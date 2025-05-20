@@ -61,6 +61,9 @@
             <input type="submit" name="action" value="Search" class="btn" />
             <a href="adminDashboard.jsp?tab=user" class="btn">Reset</a>
         </form>
+        <% if (userList != null && userList.isEmpty()) { %>
+            <p style="color: #a00; font-weight: 600;">No users found matching "<%= searchTerm %>"</p>
+        <% } %>
         <table>
             <tr>
                 <th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Role</th><th>Actions</th>
