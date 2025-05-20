@@ -57,3 +57,58 @@ body {
 .add-to-order-btn:hover {
     background: #0056b3;
 }
+
+.search-form {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.search-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 200px;
+}
+
+.search-form .btn {
+    padding: 10px 20px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+/* Search button */
+.search-form .btn-blue {
+    background-color: #4a7dff;
+    color: white;
+}
+
+.search-form .btn-blue:hover {
+    background-color: #3a6be0;
+}
+
+/* Reset button */
+.search-form .btn-gray {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    line-height: normal;
+    background-color: #e0e0e0;
+    color: #333;
+    text-decoration: none; /* Remove underline */
+    transition: background 0.3s ease;
+}
+
+.search-form .btn-gray:hover {
+    background-color: #c8c8c8;
+}

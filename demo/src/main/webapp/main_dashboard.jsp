@@ -26,7 +26,20 @@
     }
 
     session.setAttribute("activeOrderId", orderDAO.findActiveOrderId(loggedUser.getUserID()));
-    java.util.List<model.Device> deviceList = deviceDAO.getAllDevices();
+    String deviceName = request.getParameter("deviceName");
+    String deviceType = request.getParameter("deviceType");
+    List<Device> deviceList;
+
+    if ((deviceName != null && !deviceName.trim().isEmpty()) || (deviceType != null && !deviceType.trim().isEmpty())) {
+        deviceList = deviceDAO.searchDevices(
+            deviceName != null ? deviceName.trim() : "",
+            deviceType != null ? deviceType.trim() : ""
+        );
+    } else {
+        deviceList = deviceDAO.getAllDevices();
+    }
+
+
 %>
 
 <!DOCTYPE html>
@@ -47,8 +60,16 @@
             <a href="logout.jsp" class="nav-item">Logout</a>
         </div>
     </nav>
-    <%-- TODO: ADD SEARCH BAR AND FILTER --%>
-    <h1>Device Catalogue</h2>
+
+    <h1>Device Catalogue</h1>
+    <form class="search-form" method="get" action="main_dashboard.jsp">
+        <input type="text" name="deviceName" placeholder="Search by device name" />
+        <input type="text" name="deviceType" placeholder="Type (e.g., Sensor, Camera)" />
+        <button type="submit" class="btn btn-blue">Search</button>
+        <a href="main_dashboard.jsp" class="btn btn-gray">Reset</a>
+    </form>
+
+
     <table class="device-table">
         <tr>
             <th>Device Name</th>
