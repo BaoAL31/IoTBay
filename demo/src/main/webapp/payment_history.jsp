@@ -4,10 +4,15 @@
 <%@ page import="model.dao.*" %>
 
 <%
+    User loggedUser = (User) session.getAttribute("loggedUser");
+    if (loggedUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
     DeviceDAO deviceDAO = (DeviceDAO) session.getAttribute("deviceDAO");
     OrderDAO orderDAO   = (OrderDAO) session.getAttribute("orderDAO");
     PaymentDAO paymentDAO = (PaymentDAO) session.getAttribute("paymentDAO");
-    Integer userId = 1; // TODO: Retrieve from session
+    Integer userId = loggedUser.getUserID(); 
 
     // Read search parameters
     String searchPaymentId   = request.getParameter("paymentId")   != null 
@@ -35,8 +40,8 @@
 
     <nav class="navbar">
         <a href="main_dashboard.jsp" class="nav-item">Main Dashboard</a>
-        <a href="order.jsp" class="nav-item current">View Orders</a>
-        <a href="payment_history.jsp" class="nav-item">Payment History</a>
+        <a href="order.jsp" class="nav-item">View Orders</a>
+        <a href="payment_history.jsp" class="nav-item current">Payment History</a>
         <div class="nav-right">
             <a href="logout.jsp" class="nav-item">Logout</a>
         </div>
@@ -50,8 +55,8 @@
         <h3>Order ID:</h3>
         <input type="text" name="orderId" placeholder="Search by Order ID" class="search-input"/>
         <h3>&nbsp;</h3>
-        <h3>Created Date:</h3>
-        <input type="text" name="paymentDate" placeholder="YYYY-MM-DD" class="search-input"/>
+        <h3>Paid At:</h3>
+        <input type="text" name="paymentDate" placeholder="YYYY-MM-DD HH:MM:SS" class="search-input"/>
         <button type="submit" class="search-btn">Search</button>
     </form>
 
@@ -80,53 +85,58 @@
             items = orderDAO.getOrderItems(orderId);
       %>
         <div class="order-block">
-        <h3 class="order-id">Order #<%= orderId %> </h3>
-          <h4>Created Date: <%= orderDAO.getOrderCreatedDate(orderId) %></h4>
-          <table class="order-table" border="1">
-          <tr>
-              <%-- <th>Product Id</th> --%>
-              <th>Product Name</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Item Total</th>
-              <%-- <th>Actions</th> --%>
-          </tr>
+          <h3 class="order-id">Order #<%= orderId %> </h3>
+            <h4>Paid At: <%= paymentDAO.getPaidDateByOrderId(orderId) %></h4>
+            <table class="order-table" border="1">
+            <tr>
+                <%-- <th>Product Id</th> --%>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Item Total</th>
+                <%-- <th>Actions</th> --%>
+            </tr>
 
-          <% 
-          Double orderTotal = 0.0;
-          for (Map.Entry<Integer, Integer> entry : items.entrySet()) {
-              Device orderItem = deviceDAO.getDeviceById(entry.getKey());
-              Integer quantity = entry.getValue();
-              Double itemTotal = orderItem.getPrice() * quantity; 
-              orderTotal += itemTotal;
-          %>
-          <tr>
-              <%-- <td><%= orderItem.getId() %></td> --%>
-              <td><%= orderItem.getName() %></td>
-              <td><%= quantity %></td>
-              <td>$<%= orderItem.getPrice() %></td>
-              <td>$<%= String.format("%.2f", itemTotal) %></td>
-              <%-- <td>
-              <div class="action-controls">
-                  <form action="OrderServlet" method="POST" class="remove-form">
-                      <input type="hidden" name="action" value="remove"/>
-                      <input type="hidden" name="orderId" value="<%= orderId %>"/>
-                      <input type="hidden" name="orderItemId" value="<%= orderItem.getId() %>"/>
-                      <button type="submit" class="remove-btn <%= (status.equals("submitted") || status.equals("cancelled")) ? "disabled" : "" %>">Remove</button>                    
-                  </form>
-              </div>
-              </td> --%>
-          </tr>
+            <% 
+            Double orderTotal = 0.0;
+            for (Map.Entry<Integer, Integer> entry : items.entrySet()) {
+                Device orderItem = deviceDAO.getDeviceById(entry.getKey());
+                Integer quantity = entry.getValue();
+                Double itemTotal = orderItem.getPrice() * quantity; 
+                orderTotal += itemTotal;
+            %>
+            <tr>
+                <%-- <td><%= orderItem.getId() %></td> --%>
+                <td><%= orderItem.getName() %></td>
+                <td><%= quantity %></td>
+                <td>$<%= orderItem.getPrice() %></td>
+                <td>$<%= String.format("%.2f", itemTotal) %></td>
+                <%-- <td>
+                <div class="action-controls">
+                    <form action="OrderServlet" method="POST" class="remove-form">
+                        <input type="hidden" name="action" value="remove"/>
+                        <input type="hidden" name="orderId" value="<%= orderId %>"/>
+                        <input type="hidden" name="orderItemId" value="<%= orderItem.getId() %>"/>
+                        <button type="submit" class="remove-btn <%= (status.equals("submitted") || status.equals("cancelled")) ? "disabled" : "" %>">Remove</button>                    
+                    </form>
+                </div>
+                </td> --%>
+            </tr>
+            <% } %>
+            <tr>
+                <td colspan="4" class="order-total">
+                  <strong>Order Total: $<%= String.format("%.2f", orderTotal) %></strong>
+                </td>
+            </tr>
+            </table>
+            <div class="payment-details" style="margin-top:10px; margin-bottom:20px;">
+              <strong>Payment Details:</strong><br>
+              Method: <%= paymentDAO.getPaymentMethodByOrderId(orderId) %><br>
+              Card Number: <%= paymentDAO.getCardNumberByOrderId(orderId) %><br>
+            </div>
+          </div>
           <% } %>
-          <tr>
-              <td colspan="4" class="order-total">
-                <strong>Order Total: $<%= String.format("%.2f", orderTotal) %></strong>
-              </td>
-          </tr>
-          </table>
-        </div>
         <% } %>
-      <% } %>
       <% } %>
   </div>
 </body>
