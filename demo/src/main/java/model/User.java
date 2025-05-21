@@ -9,6 +9,7 @@ public class User {
     private String phoneNumber;  // contact number
     private String address;      // mailing address
     private String userType;     // role: "user" or "admin"
+    private String status;
 
     // Default constructor
     public User() {}
@@ -22,6 +23,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.userType = userType;
+        this.status = "activated";
     }
 
     // getters and setters
@@ -73,5 +75,13 @@ public class User {
     }
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

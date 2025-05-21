@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -55,7 +56,23 @@ public class AdminUserServlet extends HttpServlet {
             } else {
                 response.sendRedirect("adminDashboard.jsp?tab=staff");
             }
+        } else if ("toggleStatus".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.getUserById(userId); // You'll need to ensure this method exists
+            String currentStatus = user.getStatus();
+            String newStatus = "activated".equals(currentStatus) ? "deactivated" : "activated";
+            try {
+                userDAO.updateUserStatus(userId, newStatus);
+            } catch (SQLException | ClassNotFoundException ex) {
+                
+            }
+        
+            // Redirect to the appropriate tab
+            String tab = "user".equals(user.getUserType()) ? "user" : "staff";
+            response.sendRedirect("adminDashboard.jsp?tab=" + tab);
         }
+        
     }
 
     /**

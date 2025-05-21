@@ -53,6 +53,12 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
+            if (!"activated".equals(userByEmail.getStatus())) {
+                session.setAttribute("errorMsg", "Account is deactivated. Contact admin.");
+                response.sendRedirect("login.jsp");
+                return;
+            }
+
             // Step 2: Check password match
             if (!userByEmail.getPassword().equals(password)) {
                 session.setAttribute("errorMsg", "Incorrect password.");
@@ -68,6 +74,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 response.sendRedirect("welcome_page.jsp");
             }
+            
 
         } catch (SQLException e) {
             e.printStackTrace();

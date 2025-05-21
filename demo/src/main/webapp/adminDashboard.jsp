@@ -71,7 +71,7 @@
             <p>No users found matching "<%= searchTerm %>"</p>
         <% } %>
         <table>
-            <tr><th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Role</th><th>Actions</th></tr>
+            <tr><th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Role</th><th>Actions</th><th>Status</th></tr>
             <% for (User u : userList) { %>
             <tr>
                 <td><%= u.getUserID() %></td>
@@ -82,10 +82,21 @@
                 <td><%= u.getUserType() %></td>
                 <td>
                     <a href="UserProfileServlet?action=view&userID=<%= u.getUserID() %>">View</a> |
-                    <a href="UserProfileServlet?action=edit&userID=<%= u.getUserID() %>">Edit</a>
+                    <a href="UserProfileServlet?action=edit&userID=<%= u.getUserID() %>">Edit</a> |
                     <% if (u.getUserID() != loggedUser.getUserID()) { %>
-                        | <a href="#" onclick="confirmDelete(<%= u.getUserID() %>, false); return false;">Delete</a>
+                        <a href="#" onclick="confirmDelete(<%= u.getUserID() %>, false); return false;">Delete</a>
                     <% } else { %> | (You) <% } %>
+                </td>
+                <td>
+                    <form method="post" action="AdminUserServlet" style="display:inline;">
+                        <input type="hidden" name="action" value="toggleStatus"/>
+                        <input type="hidden" name="userId" value="<%= u.getUserID() %>"/>
+                        <button 
+                            type="submit"
+                            class="status-btn <%= "activated".equals(u.getStatus()) ? "deactivate" : "activate" %>">
+                            <%= "activated".equals(u.getStatus()) ? "Deactivate" : "Activate" %>
+                        </button>
+                    </form>
                 </td>
             </tr>
             <% } %>
@@ -96,7 +107,7 @@
     <div id="staffTab" class="tab-content" style="display: none;">
         <h3>All Staff</h3>
         <table>
-            <tr><th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Role</th><th>Actions</th></tr>
+            <tr><th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Role</th><th>Actions</th><th>Status</th></tr>
             <% for (User a : staffList) { %>
             <tr>
                 <td><%= a.getUserID() %></td>
@@ -109,6 +120,17 @@
                     <a href="UserProfileServlet?action=view&userID=<%= a.getUserID() %>">View</a> |
                     <a href="UserProfileServlet?action=edit&userID=<%= a.getUserID() %>">Edit</a> |
                     <a href="#" onclick="confirmDelete(<%= a.getUserID() %>, true); return false;">Delete</a>
+                </td>
+                <td>
+                    <form method="post" action="AdminUserServlet" style="display:inline;">
+                        <input type="hidden" name="action" value="toggleStatus"/>
+                        <input type="hidden" name="userId" value="<%= a.getUserID() %>"/>
+                        <button 
+                            type="submit"
+                            class="status-btn <%= "activated".equals(a.getStatus()) ? "deactivate" : "activate" %>">
+                            <%= "activated".equals(a.getStatus()) ? "Deactivate" : "Activate" %>
+                        </button>
+                    </form>
                 </td>
             </tr>
             <% } %>

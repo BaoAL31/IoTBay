@@ -83,21 +83,6 @@ CREATE TABLE PaymentItem (
 -- Seed Data
 -- ================================================================
 
--- Users (only 3 for demo)
-INSERT INTO `User` (full_name, email, password, phone, created_at) VALUES
-  ('Alice Zhang',  'alice.zhang@example.com',  'hashed_pw_1', '0400-111-222', '2025-04-01 09:12:00'),
-  ('Bob Smith',    'bob.smith@example.com',    'hashed_pw_2', '0400-333-444', '2025-03-28 14:32:00'),
-  ('Carol Nguyen', 'carol.nguyen@example.com', 'hashed_pw_3', '0400-555-666', '2025-04-15 11:05:00');
-
--- Devices
-INSERT INTO Device (name, type, unit_price, stock, created_at) VALUES
-  ('TempSense Pro',      'Sensor',     49.95, 100, '2025-03-01 10:00:00'),
-  ('LightControl X',     'Actuator',   79.99,  50, '2025-02-15 12:30:00'),
-  ('SmartCam HD',        'Camera',    129.50,  25, '2025-01-20 09:15:00'),
-  ('AirQuality Monitor', 'Sensor',     59.00,  75, '2025-04-05 14:50:00'),
-  ('DoorLock Secure',    'Actuator',   99.99,  40, '2025-03-18 11:25:00'),
-  ('PowerMeter Lite',    'Meter',      39.95, 120, '2025-04-10 16:10:00');
-
 -- Orders (mostly for user_id=1)
 INSERT INTO `Order` (user_id, status, created_at, updated_at) VALUES
   (1, 'draft',     '2025-04-20 09:00:00', '2025-04-20 09:00:00'),
@@ -182,3 +167,6 @@ INSERT INTO device (name, type, unit_price, stock, created_at) VALUES
 ('AirGuard Max', 'Sensor', 72.30, 80, '2025-04-04 09:45:00'),
 ('CamWatch Ultra', 'Camera', 180.00, 15, '2025-04-08 08:30:00'),
 ('GateKeeper', 'Actuator', 120.00, 20, '2025-04-10 17:00:00');
+
+ALTER TABLE user ADD COLUMN status VARCHAR(20) DEFAULT 'activated';
+
