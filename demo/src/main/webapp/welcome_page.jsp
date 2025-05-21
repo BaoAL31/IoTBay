@@ -21,7 +21,7 @@
             <h2>Welcome, <%= loggedUser.getFullName() %>!</h2>
             <p class="subtitle">You are logged in as: <strong><%= loggedUser.getUserType() %></strong></p>
 
-            <% if ("admin".equals(loggedUser.getUserType())) { %>
+            <% if ("admin".equals(loggedUser.getUserType()) || "staff".equals(loggedUser.getUserType())) { %>
                 <a class="btn" href="adminDashboard.jsp">Go to Admin Dashboard</a>
             <% } else { %>
                 <a class="btn" href="UserProfileServlet?action=view&userID=<%= loggedUser.getUserID() %>">View My Profile</a>

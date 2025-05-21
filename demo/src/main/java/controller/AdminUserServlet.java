@@ -20,7 +20,13 @@ public class AdminUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");  // e.g. "add"
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
 
+        if (!"admin".equals(loggedUser.getUserType())) {
+            response.sendRedirect("unauthorized.jsp");
+            return;
+        }
+        
         if ("add".equals(action)) {
             // read form parameters
             String name     = request.getParameter("name");
@@ -47,7 +53,7 @@ public class AdminUserServlet extends HttpServlet {
             if ("user".equals(userType)) {
                 response.sendRedirect("adminDashboard.jsp?tab=user");
             } else {
-                response.sendRedirect("adminDashboard.jsp?tab=admin");
+                response.sendRedirect("adminDashboard.jsp?tab=staff");
             }
         }
     }
@@ -61,6 +67,13 @@ public class AdminUserServlet extends HttpServlet {
 
         String action = request.getParameter("action");  // e.g. "delete"
 
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+        if (!"admin".equals(loggedUser.getUserType())) {
+            response.sendRedirect("unauthorized.jsp");
+            return;
+        }
+
+
         if ("delete".equals(action)) {
             int userId = Integer.parseInt(request.getParameter("userId"));  // ID to delete
             UserDAO userDAO = new UserDAO();
@@ -71,7 +84,7 @@ public class AdminUserServlet extends HttpServlet {
 
                 // redirect to correct dashboard tab based on deleted user's type
                 if ("admin".equalsIgnoreCase(user.getUserType())) {
-                    response.sendRedirect("adminDashboard.jsp?tab=admin");
+                    response.sendRedirect("adminDashboard.jsp?tab=staff");
                 } else {
                     response.sendRedirect("adminDashboard.jsp?tab=user");
                 }

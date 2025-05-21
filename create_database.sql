@@ -156,10 +156,10 @@ INSERT INTO user (full_name, email, password, phone, created_at, address, user_t
 ('Benjamin Tran', 'ben.tran@example.com', 'BenTran2025', '0455660001', '2025-03-27 18:30:00', '3, Elizabeth St.', 'user');
 
 INSERT INTO user (full_name, email, password, phone, created_at, address, user_type) VALUES
-('Mahidi Ilangarathna', 'mahdidi.i@iotbay.com', 'Mahidi@098', '0400101212', '2025-04-01 09:12:00', '12, King St.', 'admin'),
-('Hoang Bao Nguyen', 'bao.n@iotbay.com', 'Bao=123', '0400333444', '2025-03-28 14:32:00', '98, College St.', 'admin'),
-('Junayeed Halim', 'junayeed.h@iotbay.com', 'JHalim=345', '0431221022', '2025-05-20 21:30:37', '2, Bond Street', 'admin'),
-('Sanija Abeywickrama', 'sanija.a@iotbay.com', 'Sanija456', '0400111100', '2025-05-01 08:00:00', '456, Harris St.', 'admin');
+('Mahidi Ilangarathna', 'mahdidi.i@iotbay.com', 'Mahidi@098', '0400101212', '2025-04-01 09:12:00', '12, King St.', 'staff'),
+('Hoang Bao Nguyen', 'bao.n@iotbay.com', 'Bao=123', '0400333444', '2025-03-28 14:32:00', '98, College St.', 'staff'),
+('Junayeed Halim', 'junayeed.h@iotbay.com', 'JHalim=345', '0431221022', '2025-05-20 21:30:37', '2, Bond Street', 'staff'),
+('Sanija Abeywickrama', 'sanija.a@iotbay.com', 'Sanija456', '0400111100', '2025-05-01 08:00:00', '456, Harris St.', 'staff');
 
 INSERT INTO device (name, type, unit_price, stock, created_at) VALUES
 ('SmartLight Mini', 'Sensor', 39.99, 100, '2025-01-12 09:00:00'),
