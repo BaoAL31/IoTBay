@@ -267,3 +267,28 @@ th {
       box-sizing: border-box;
       font-size: 14px;
   }
+
+  .status-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+  }
+
+  .status-btn.activate {
+      background-color: #4caf50; /* Green */
+      color: white;
+  }
+
+  .status-btn.deactivate {
+      background-color: #f44336; /* Red */
+      color: white;
+  }
+
+  .status-btn:hover {
+      opacity: 0.85;
+      transform: scale(1.03);
+  }

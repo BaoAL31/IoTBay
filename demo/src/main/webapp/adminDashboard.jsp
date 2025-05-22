@@ -1,35 +1,32 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="model.User, model.Device, model.dao.UserDAO, model.dao.DeviceDAO, model.dao.OrderDAO, model.dao.DBConnector, java.util.List" %>
+<%@ page import="model.User, model.Device, model.dao.UserDAO, model.dao.DeviceDAO, model.dao.DBConnector, java.util.List" %>
 <%
-    // Ensure only logged-in admins can access this page
+    // Access control
     User loggedUser = (User) session.getAttribute("loggedUser");
-    if (loggedUser == null || !"admin".equals(loggedUser.getUserType())) {
+    if (loggedUser == null || (!"admin".equals(loggedUser.getUserType()) && !"staff".equals(loggedUser.getUserType()))) {
         response.sendRedirect("unauthorized.jsp");
         return;
     }
 
-    // Initialize DAOs
+    // DAOs
     UserDAO userDAO = new UserDAO();
     DBConnector db = new DBConnector();
     DeviceDAO deviceDAO = new DeviceDAO(db.openConnection());
 
-    // Read request parameters for filtering/search
+    // Filters
     String action = request.getParameter("action");
     String searchTerm = request.getParameter("name");
     String deviceSearchName = request.getParameter("deviceName");
     String deviceSearchType = request.getParameter("deviceType");
 
-    // Fetch user lists based on search or default user type
+    // Data
     List<User> userList = ("Search".equals(action) && searchTerm != null && !searchTerm.trim().isEmpty())
                           ? userDAO.searchUsersByName(searchTerm)
                           : userDAO.getUsersByType("user");
-    List<User> adminList = userDAO.getUsersByType("admin");
-
-    // Fetch device list based on search filters or all devices
+    List<User> staffList = userDAO.getUsersByType("staff");
     List<Device> deviceList = (deviceSearchName != null || deviceSearchType != null)
-                              ? deviceDAO.searchDevices(
-                                    deviceSearchName != null ? deviceSearchName : "",
-                                    deviceSearchType != null ? deviceSearchType : "")
+                              ? deviceDAO.searchDevices(deviceSearchName != null ? deviceSearchName : "",
+                                                       deviceSearchType != null ? deviceSearchType : "")
                               : deviceDAO.getAllDevices();
 %>
 
@@ -42,42 +39,39 @@
 <body>
 <div class="admin-container">
     <h2>Admin Dashboard</h2>
-    <p>Welcome, Admin</p>
+    <p>Welcome, <%= loggedUser.getUserType().substring(0,1).toUpperCase() + loggedUser.getUserType().substring(1) %></p>
 
-    <!-- Buttons to open modals for adding users/devices -->
-    <button class="btn btn-blue" onclick="openModal()">+ Add New User</button>
+    <!-- Role-based buttons -->
+    <% if ("admin".equals(loggedUser.getUserType())) { %>
+        <button class="btn btn-blue" onclick="openModal()">+ Add New User</button>
+    <% } %>
     <button class="btn btn-blue" onclick="openDeviceModal()">+ Add New Device</button>
 
-    <!-- Tab navigation -->
+    <!-- Tabs -->
     <div class="tabs">
-        <button class="tab-btn" id="tab-user" onclick="switchTab('user')">Users</button>
-        <button class="tab-btn" id="tab-admin" onclick="switchTab('admin')">Admins</button>
-        <button class="tab-btn" id="tab-device" onclick="switchTab('device')">Devices</button>
+        <% if ("admin".equals(loggedUser.getUserType())) { %>
+            <button class="tab-btn <%= "user".equals(request.getParameter("tab")) ? "active" : "" %>" id="tab-user" onclick="switchTab('user')">Customers</button>
+            <button class="tab-btn <%= "staff".equals(request.getParameter("tab")) ? "active" : "" %>" id="tab-staff" onclick="switchTab('staff')">Staff</button>
+        <% } %>
+        <button class="tab-btn <%= "device".equals(request.getParameter("tab")) || request.getParameter("tab") == null ? "active" : "" %>" id="tab-device" onclick="switchTab('device')">Devices</button>
     </div>
 
-    <!-- USER TAB CONTENT -->
-    <div id="userTab" class="tab-content" style="display: block;">
-        <h3>All Users</h3>
-        <!-- Search form for users -->
+
+    <% if ("admin".equals(loggedUser.getUserType())) { %>
+    <!-- USERS TAB -->
+    <div id="userTab" class="tab-content" style="display: none;">
+        <h3>All Customers</h3>
         <form action="adminDashboard.jsp" method="get" class="search-form">
             <input type="hidden" name="tab" value="user" />
-            <input type="text" name="name" placeholder="Search by full name"
-                   value="<%= (searchTerm != null) ? searchTerm : "" %>" class="text-field"/>
+            <input type="text" name="name" placeholder="Search by full name" value="<%= (searchTerm != null) ? searchTerm : "" %>" class="text-field"/>
             <input type="submit" name="action" value="Search" class="btn" />
             <a href="adminDashboard.jsp?tab=user" class="btn">Reset</a>
         </form>
-        <%-- Show message if no users found --%>
-        <% if (userList != null && userList.isEmpty()) { %>
-            <p style="color: #a00; font-weight: 600;">
-                No users found matching "<%= searchTerm %>"
-            </p>
+        <% if (userList.isEmpty()) { %>
+            <p>No users found matching "<%= searchTerm %>"</p>
         <% } %>
-        <!-- User table -->
         <table>
-            <tr>
-                <th>User ID</th><th>Name</th><th>Email</th>
-                <th>Phone</th><th>Address</th><th>Role</th><th>Actions</th>
-            </tr>
+            <tr><th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Role</th><th>Actions</th><th>Status</th></tr>
             <% for (User u : userList) { %>
             <tr>
                 <td><%= u.getUserID() %></td>
@@ -88,26 +82,33 @@
                 <td><%= u.getUserType() %></td>
                 <td>
                     <a href="UserProfileServlet?action=view&userID=<%= u.getUserID() %>">View</a> |
-                    <a href="UserProfileServlet?action=edit&userID=<%= u.getUserID() %>">Edit</a>
+                    <a href="UserProfileServlet?action=edit&userID=<%= u.getUserID() %>">Edit</a> |
                     <% if (u.getUserID() != loggedUser.getUserID()) { %>
-                        | <a href="#" onclick="confirmDelete(<%= u.getUserID() %>, false); return false;">Delete</a>
+                        <a href="#" onclick="confirmDelete(<%= u.getUserID() %>, false); return false;">Delete</a>
                     <% } else { %> | (You) <% } %>
+                </td>
+                <td>
+                    <form method="post" action="AdminUserServlet" style="display:inline;">
+                        <input type="hidden" name="action" value="toggleStatus"/>
+                        <input type="hidden" name="userId" value="<%= u.getUserID() %>"/>
+                        <button 
+                            type="submit"
+                            class="status-btn <%= "activated".equals(u.getStatus()) ? "deactivate" : "activate" %>">
+                            <%= "activated".equals(u.getStatus()) ? "Deactivate" : "Activate" %>
+                        </button>
+                    </form>
                 </td>
             </tr>
             <% } %>
         </table>
     </div>
 
-    <!-- ADMIN TAB CONTENT -->
-    <div id="adminTab" class="tab-content" style="display:none;">
-        <h3>All Admins</h3>
-        <!-- Admins only need listing, no search -->
+    <!-- STAFF TAB -->
+    <div id="staffTab" class="tab-content" style="display: none;">
+        <h3>All Staff</h3>
         <table>
-            <tr>
-                <th>User ID</th><th>Name</th><th>Email</th>
-                <th>Phone</th><th>Address</th><th>Role</th><th>Actions</th>
-            </tr>
-            <% for (User a : adminList) { %>
+            <tr><th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Role</th><th>Actions</th><th>Status</th></tr>
+            <% for (User a : staffList) { %>
             <tr>
                 <td><%= a.getUserID() %></td>
                 <td><%= a.getFullName() %></td>
@@ -117,35 +118,38 @@
                 <td><%= a.getUserType() %></td>
                 <td>
                     <a href="UserProfileServlet?action=view&userID=<%= a.getUserID() %>">View</a> |
-                    <a href="UserProfileServlet?action=edit&userID=<%= a.getUserID() %>">Edit</a>
-                    <% if (a.getUserID() != loggedUser.getUserID()) { %>
-                        | <a href="#" onclick="confirmDelete(<%= a.getUserID() %>, true); return false;">Delete</a>
-                    <% } else { %> | (You) <% } %>
+                    <a href="UserProfileServlet?action=edit&userID=<%= a.getUserID() %>">Edit</a> |
+                    <a href="#" onclick="confirmDelete(<%= a.getUserID() %>, true); return false;">Delete</a>
+                </td>
+                <td>
+                    <form method="post" action="AdminUserServlet" style="display:inline;">
+                        <input type="hidden" name="action" value="toggleStatus"/>
+                        <input type="hidden" name="userId" value="<%= a.getUserID() %>"/>
+                        <button 
+                            type="submit"
+                            class="status-btn <%= "activated".equals(a.getStatus()) ? "deactivate" : "activate" %>">
+                            <%= "activated".equals(a.getStatus()) ? "Deactivate" : "Activate" %>
+                        </button>
+                    </form>
                 </td>
             </tr>
             <% } %>
         </table>
     </div>
+    <% } %>
 
-    <!-- DEVICE TAB CONTENT -->
-    <div id="deviceTab" class="tab-content" style="display:none;">
+    <!-- DEVICES TAB -->
+    <div id="deviceTab" class="tab-content" style="display: none;">
         <h3>All Devices</h3>
-        <!-- Search form for devices -->
         <form action="adminDashboard.jsp" method="get" class="search-form">
             <input type="hidden" name="tab" value="device" />
-            <input type="text" name="deviceName" placeholder="Search by device name"
-                   value="<%= deviceSearchName != null ? deviceSearchName : "" %>" class="text-field"/>
-            <input type="text" name="deviceType" placeholder="Type (e.g., Sensor, Camera)"
-                   value="<%= deviceSearchType != null ? deviceSearchType : "" %>" class="text-field"/>
+            <input type="text" name="deviceName" placeholder="Search by device name" value="<%= deviceSearchName != null ? deviceSearchName : "" %>" class="text-field"/>
+            <input type="text" name="deviceType" placeholder="Type (e.g., Sensor, Camera)" value="<%= deviceSearchType != null ? deviceSearchType : "" %>" class="text-field"/>
             <input type="submit" value="Search" class="btn" />
             <a href="adminDashboard.jsp?tab=device" class="btn">Reset</a>
         </form>
-        <!-- Device table -->
         <table>
-            <tr>
-                <th>ID</th><th>Name</th><th>Type</th>
-                <th>Price</th><th>Stock</th><th>Actions</th>
-            </tr>
+            <tr><th>ID</th><th>Name</th><th>Type</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
             <% for (Device d : deviceList) { %>
             <tr>
                 <td><%= d.getId() %></td>
@@ -162,44 +166,9 @@
         </table>
     </div>
 
-    <!-- ADD DEVICE MODAL -->
-    <div id="addDeviceModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Add New Device</h3><br>
-            <form action="DeviceListServlet" method="post" class="modal-form">
-                <input type="hidden" name="action" value="add" />
-                <label>Device Name:</label>
-                <input type="text" name="name" required class="text-field"/>
-                <label>Type:</label>
-                <input type="text" name="type" required class="text-field"/>
-                <label>Unit Price:</label>
-                <input type="number" step="0.01" name="price" required class="text-field"/>
-                <label>Stock:</label>
-                <input type="number" name="stock" required class="text-field"/>
-                <div class="form-buttons">
-                    <button type="submit" class="btn btn-blue">Add Device</button>
-                    <button type="button" class="btn btn-gray" onclick="closeDeviceModal()">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- DEVICE DELETE CONFIRMATION MODAL -->
-    <div id="deleteDeviceModal" class="modal-overlay">
-        <div class="modal-content small">
-            <h3>Confirm Delete</h3>
-            <p>Are you sure you want to delete this device?</p>
-            <form id="deleteDeviceForm" method="get" action="DeviceListServlet">
-                <input type="hidden" name="action" value="delete" />
-                <input type="hidden" id="deleteDeviceId" name="id" />
-                <div class="form-buttons">
-                    <button type="submit" class="btn btn-red">Delete</button>
-                    <button type="button" class="btn btn-gray" onclick="closeDeleteDeviceModal()">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    <!-- Modals -->
+    <% if ("admin".equals(loggedUser.getUserType())) { %>
+       
     <!-- ADD USER MODAL -->
     <div id="addUserModal" class="modal-overlay">
         <div class="modal-content">
@@ -219,7 +188,7 @@
                 <label>Role:</label>
                 <select name="user_type" required class="text-field">
                     <option value="user">User</option>
-                    <option value="admin">Admin</option>
+                    <option value="staff">Staff</option>
                 </select>
                 <div class="form-buttons">
                     <button type="submit" class="btn btn-blue">Add User</button>
@@ -228,7 +197,6 @@
             </form>
         </div>
     </div>
-
     <!-- USER DELETE CONFIRMATION MODAL -->
     <div id="deleteConfirmModal" class="modal-overlay">
         <div class="modal-content small">
@@ -243,49 +211,69 @@
             </form>
         </div>
     </div>
+    <% } %>
 
-    <!-- JavaScript for modals and tab switching -->
+    <!-- Device Modal -->
+    <div id="addDeviceModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Add New Device</h3><br>
+            <form action="DeviceListServlet" method="post" class="modal-form">
+                <input type="hidden" name="action" value="add" />
+                <label>Device Name:</label>
+                <input type="text" name="name" required class="text-field"/>
+                <label>Type:</label>
+                <input type="text" name="type" required class="text-field"/>
+                <label>Price:</label>
+                <input type="number" name="price" required class="text-field" step="0.01"/>
+                <label>Stock:</label>
+                <input type="number" name="stock" required class="text-field"/>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-blue">Add Device</button>
+                    <button type="button" class="btn btn-gray" onclick="closeDeviceModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
     <script>
-        // User modal controls
-        function openModal() { document.getElementById("addUserModal").style.display = "flex"; }
-        function closeUserModal() { document.getElementById("addUserModal").style.display = "none"; }
+        function switchTab(tabId) {
+            const tabs = ["user", "staff", "device"];
+            tabs.forEach(id => {
+                const tab = document.getElementById(id + "Tab");
+                const btn = document.getElementById("tab-" + id);
+                if (tab) tab.style.display = (id === tabId) ? "block" : "none";
+                if (btn) btn.classList.toggle("active", id === tabId);
+            });
+        }
 
-        // Confirm user deletion
-        function confirmDelete(userId, isAdmin) {
+         function confirmDelete(userId, isStaff) {
             document.getElementById("deleteUserId").value = userId;
             document.getElementById("deleteConfirmModal").style.display = "flex";
             // Update message based on role
-            const msg = isAdmin 
-                        ? "Are you sure you want to delete this admin?" 
+            const msg = isStaff 
+                        ? "Are you sure you want to delete this staff?" 
                         : "Are you sure you want to delete this user?";
             document.querySelector("#deleteConfirmModal .modal-message").textContent = msg;
         }
         function closeDeleteModal() { document.getElementById("deleteConfirmModal").style.display = "none"; }
-
-        // Device modal controls
+        function openModal() { document.getElementById("addUserModal").style.display = "flex"; }
+        function closeUserModal() { document.getElementById("addUserModal").style.display = "none"; }
         function openDeviceModal() { document.getElementById("addDeviceModal").style.display = "flex"; }
         function closeDeviceModal() { document.getElementById("addDeviceModal").style.display = "none"; }
-        function confirmDeleteDevice(deviceId) {
-            document.getElementById("deleteDeviceId").value = deviceId;
+        function confirmDeleteDevice(id) {
+            document.getElementById("deleteDeviceId").value = id;
             document.getElementById("deleteDeviceModal").style.display = "flex";
         }
-        function closeDeleteDeviceModal() { document.getElementById("deleteDeviceModal").style.display = "none"; }
 
-        // Tab switching logic
-        function switchTab(tabId) {
-            ["user","admin","device"].forEach(id => {
-                document.getElementById(id + "Tab").style.display = (id === tabId) ? "block" : "none";
-                document.getElementById("tab-" + id).classList.toggle("active", id === tabId);
-            });
-        }
-        // On load, activate proper tab from URL param
+        // Auto-tab select
         window.addEventListener("DOMContentLoaded", () => {
-            const params = new URLSearchParams(window.location.search);
-            switchTab(params.get("tab") || "user");
+            const defaultTab = "<%= "staff".equals(loggedUser.getUserType()) ? "device" : (request.getParameter("tab") != null ? request.getParameter("tab") : "user") %>";
+            switchTab(defaultTab);
         });
     </script>
 
-    <!-- Footer links -->
+    <!-- Footer -->
     <div class="mt-20 centered">
         <a href="welcome_page.jsp">Back to Welcome Page</a> |
         <a href="logout.jsp">Logout</a>

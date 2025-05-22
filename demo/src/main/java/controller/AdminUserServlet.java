@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -20,7 +21,13 @@ public class AdminUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");  // e.g. "add"
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
 
+        if (!"admin".equals(loggedUser.getUserType())) {
+            response.sendRedirect("unauthorized.jsp");
+            return;
+        }
+        
         if ("add".equals(action)) {
             // read form parameters
             String name     = request.getParameter("name");
@@ -47,9 +54,25 @@ public class AdminUserServlet extends HttpServlet {
             if ("user".equals(userType)) {
                 response.sendRedirect("adminDashboard.jsp?tab=user");
             } else {
-                response.sendRedirect("adminDashboard.jsp?tab=admin");
+                response.sendRedirect("adminDashboard.jsp?tab=staff");
             }
+        } else if ("toggleStatus".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.getUserById(userId); // You'll need to ensure this method exists
+            String currentStatus = user.getStatus();
+            String newStatus = "activated".equals(currentStatus) ? "deactivated" : "activated";
+            try {
+                userDAO.updateUserStatus(userId, newStatus);
+            } catch (SQLException | ClassNotFoundException ex) {
+                
+            }
+        
+            // Redirect to the appropriate tab
+            String tab = "user".equals(user.getUserType()) ? "user" : "staff";
+            response.sendRedirect("adminDashboard.jsp?tab=" + tab);
         }
+        
     }
 
     /**
@@ -61,6 +84,13 @@ public class AdminUserServlet extends HttpServlet {
 
         String action = request.getParameter("action");  // e.g. "delete"
 
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+        if (!"admin".equals(loggedUser.getUserType())) {
+            response.sendRedirect("unauthorized.jsp");
+            return;
+        }
+
+
         if ("delete".equals(action)) {
             int userId = Integer.parseInt(request.getParameter("userId"));  // ID to delete
             UserDAO userDAO = new UserDAO();
@@ -71,7 +101,7 @@ public class AdminUserServlet extends HttpServlet {
 
                 // redirect to correct dashboard tab based on deleted user's type
                 if ("admin".equalsIgnoreCase(user.getUserType())) {
-                    response.sendRedirect("adminDashboard.jsp?tab=admin");
+                    response.sendRedirect("adminDashboard.jsp?tab=staff");
                 } else {
                     response.sendRedirect("adminDashboard.jsp?tab=user");
                 }

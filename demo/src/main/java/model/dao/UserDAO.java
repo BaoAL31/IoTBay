@@ -15,7 +15,7 @@ public class UserDAO {
     // Inserts a new user into the database and sets the generated userID on the User object
     public boolean createUser(User user) {
         // SQL with placeholders for prepared statement
-        String sql = "INSERT INTO User (full_name, email, password, phone, address, user_type) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User (full_name, email, password, phone, address, user_type, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
     
         try {
             DBConnector db = new DBConnector();
@@ -29,6 +29,7 @@ public class UserDAO {
             stmt.setString(4, user.getPhoneNumber());
             stmt.setString(5, user.getAddress());
             stmt.setString(6, user.getUserType());
+            stmt.setString(7, user.getStatus());
     
             int affectedRows = stmt.executeUpdate();  // execute insert
     
@@ -73,6 +74,7 @@ public class UserDAO {
                 user.setPhoneNumber(rs.getString("phone"));
                 user.setAddress(rs.getString("address"));
                 user.setUserType(rs.getString("user_type"));
+                user.setStatus(rs.getString("status"));
 
                 db.closeConnection();
                 return user;
@@ -90,7 +92,7 @@ public class UserDAO {
 
     // Updates existing user details; returns true if at least one row was updated
     public boolean updateUser(User user) {
-        String sql = "UPDATE User SET full_name=?, email=?, password=?, phone=?, address=? WHERE user_id=?";
+        String sql = "UPDATE User SET full_name=?, email=?, password=?, phone=?, address=?, status=? WHERE user_id=?";
 
         try {
             DBConnector db = new DBConnector();
@@ -102,6 +104,7 @@ public class UserDAO {
             stmt.setString(4, user.getPhoneNumber());
             stmt.setString(5, user.getAddress());
             stmt.setInt(6, user.getUserID());     // specify which user to update
+            stmt.setString(7, user.getStatus());
 
             boolean result = stmt.executeUpdate() > 0;
             db.closeConnection();
@@ -174,6 +177,7 @@ public class UserDAO {
                 user.setPhoneNumber(rs.getString("phone"));
                 user.setAddress(rs.getString("address"));
                 user.setUserType(rs.getString("user_type"));
+                user.setStatus(rs.getString("status"));
                 users.add(user);
             }
 
@@ -187,7 +191,7 @@ public class UserDAO {
 
     // Alias for createUser, used by admin functionality
     public boolean addUser(User user) {
-        String sql = "INSERT INTO User (full_name, email, password, phone, address, user_type) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User (full_name, email, password, phone, address, user_type, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
@@ -198,6 +202,7 @@ public class UserDAO {
             stmt.setString(4, user.getPhoneNumber());
             stmt.setString(5, user.getAddress());
             stmt.setString(6, user.getUserType());
+            stmt.setString(7, user.getStatus());
             boolean result = stmt.executeUpdate() > 0;
             db.closeConnection();
             return result;
@@ -242,6 +247,7 @@ public class UserDAO {
                 u.setPhoneNumber(rs.getString("phone"));
                 u.setAddress(rs.getString("address"));
                 u.setUserType(rs.getString("user_type"));
+                u.setStatus(rs.getString("status"));
                 users.add(u);
             }
             db.closeConnection();
@@ -272,6 +278,7 @@ public class UserDAO {
                 user.setPhoneNumber(rs.getString("phone"));
                 user.setAddress(rs.getString("address"));
                 user.setUserType(rs.getString("user_type"));
+                user.setStatus(rs.getString("status"));
                 users.add(user);
             }
     
@@ -282,5 +289,16 @@ public class UserDAO {
     
         return users;
     }
+
+    public void updateUserStatus(int userId, String status) throws SQLException, ClassNotFoundException {
+        String sql = "UPDATE User SET status = ? WHERE user_id = ?";
+        DBConnector db = new DBConnector();
+        Connection conn = db.openConnection();  // open DB connection
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        }
+    }    
     
 }

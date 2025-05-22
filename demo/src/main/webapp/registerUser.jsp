@@ -81,7 +81,13 @@
 
             <label for="address">Address:</label>
             <input type="text" name="address" id="address" required/>
-            <input type="hidden" name="user_type" value="user" />
+            <select name="user_type">
+                <option value="user">User</option>
+                <option value="staff">Staff</option>
+            </select>
+
+            <input type="password" name="staff_password" placeholder="Enter staff key (if any)">
+
 
             <input type="submit" class="btn" value="Register"/>
         </form>

@@ -102,10 +102,16 @@ public class UserProfileServlet extends HttpServlet {
         String password = request.getParameter("password");
         String phone    = request.getParameter("phoneNumber");
         String address  = request.getParameter("address");
-        String userType = request.getParameter("user_type");
-        if (userType == null || userType.isEmpty()) {
-            userType = "user";  // default role
+        String staffPassword = request.getParameter("staff_password");
+        String requestedType = request.getParameter("user_type");  // value from radio/dropdown, optional
+        String userType;
+
+        if ("staff".equalsIgnoreCase(requestedType) && "0000".equals(staffPassword)) {
+            userType = "staff";
+        } else {
+            userType = "user"; // default fallback
         }
+
 
         System.out.println("Registering: " + name + ", " + email);
 
