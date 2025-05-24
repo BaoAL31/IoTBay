@@ -30,7 +30,7 @@ public class DeviceListServlet extends HttpServlet {
         } catch (ClassNotFoundException | SQLException e) {
             // Log and fail fast if DB setup fails
             Logger.getLogger(DeviceListServlet.class.getName())
-                  .log(Level.SEVERE, "Database connection error", e);
+                    .log(Level.SEVERE, "Database connection error", e);
             throw new RuntimeException("Failed to initialize database connection", e);
         }
     }
@@ -81,17 +81,18 @@ public class DeviceListServlet extends HttpServlet {
             if (action == null) {
                 // Redirect back if no action provided
                 response.sendRedirect("DeviceListServlet?tab=device");
-            } else switch (action) {
-                case "add":
-                    addDevice(request, response);
-                    break;
-                case "update":
-                    updateDevice(request, response);
-                    break;
-                default:
-                    response.sendRedirect("DeviceListServlet?tab=device");
-                    break;
-            }
+            } else
+                switch (action) {
+                    case "add":
+                        addDevice(request, response);
+                        break;
+                    case "update":
+                        updateDevice(request, response);
+                        break;
+                    default:
+                        response.sendRedirect("DeviceListServlet?tab=device");
+                        break;
+                }
         } catch (ServletException | IOException e) {
             // Forward to error page on exception
             request.setAttribute("errorMessage", "Something went wrong in POST");
@@ -99,7 +100,7 @@ public class DeviceListServlet extends HttpServlet {
         }
     }
 
-    // Fetches all devices and forwards to dashboard
+    // Fetches all devices and forwards to dashboard`
     private void listDevices(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         List<Device> deviceList = deviceDAO.getAllDevices();
@@ -112,15 +113,15 @@ public class DeviceListServlet extends HttpServlet {
     private void addDevice(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String name     = request.getParameter("name");
-            String type     = request.getParameter("type");
+            String name = request.getParameter("name");
+            String type = request.getParameter("type");
             String priceStr = request.getParameter("price");
             String stockStr = request.getParameter("stock");
 
             // Basic validation: all fields required
             if (name == null || type == null || priceStr == null || stockStr == null ||
-                name.trim().isEmpty() || type.trim().isEmpty() ||
-                priceStr.trim().isEmpty() || stockStr.trim().isEmpty()) {
+                    name.trim().isEmpty() || type.trim().isEmpty() ||
+                    priceStr.trim().isEmpty() || stockStr.trim().isEmpty()) {
                 request.setAttribute("errorMessage", "All fields are required.");
                 request.getRequestDispatcher("adminDashboard.jsp").forward(request, response);
                 return;
@@ -128,7 +129,7 @@ public class DeviceListServlet extends HttpServlet {
 
             // Parse numeric values
             double price = Double.parseDouble(priceStr.trim());
-            int stock    = Integer.parseInt(stockStr.trim());
+            int stock = Integer.parseInt(stockStr.trim());
 
             // Create and persist new device
             Device device = new Device(0, name.trim(), type.trim(), price, stock);
@@ -147,11 +148,11 @@ public class DeviceListServlet extends HttpServlet {
     private void updateDevice(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int id        = Integer.parseInt(request.getParameter("id"));
-            String name   = request.getParameter("name");
-            String type   = request.getParameter("type");
-            double price  = Double.parseDouble(request.getParameter("price"));
-            int stock     = Integer.parseInt(request.getParameter("stock"));
+            int id = Integer.parseInt(request.getParameter("id"));
+            String name = request.getParameter("name");
+            String type = request.getParameter("type");
+            double price = Double.parseDouble(request.getParameter("price"));
+            int stock = Integer.parseInt(request.getParameter("stock"));
 
             Device updatedDevice = new Device(id, name, type, price, stock);
             deviceDAO.updateDevice(updatedDevice);
