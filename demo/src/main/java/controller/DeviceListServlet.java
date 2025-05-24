@@ -100,7 +100,7 @@ public class DeviceListServlet extends HttpServlet {
         }
     }
 
-    // Fetches all devices and forwards to dashboard
+    // Fetches all devices and forwards to dashboard`
     private void listDevices(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         List<Device> deviceList = deviceDAO.getAllDevices();
