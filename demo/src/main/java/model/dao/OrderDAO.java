@@ -233,6 +233,19 @@ public class OrderDAO {
         }
     }
 
+    public String getOrderStatus(int orderId) throws SQLException {
+        String query = "SELECT status FROM `order` WHERE order_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, orderId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("status");
+                }
+            }
+        }
+        return null;
+    }
+
     
 
 }
