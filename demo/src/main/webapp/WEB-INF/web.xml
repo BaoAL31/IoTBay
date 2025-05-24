@@ -84,5 +84,15 @@
         <url-pattern>/AdminUserServlet</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>AccessLogServlet</servlet-name>
+        <servlet-class>controller.AccessLogServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AccessLogServlet</servlet-name>
+        <url-pattern>/AccessLogServlet</url-pattern>
+    </servlet-mapping>
+
 
 </web-app>

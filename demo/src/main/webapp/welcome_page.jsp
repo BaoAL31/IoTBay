@@ -26,6 +26,11 @@
             <% } else { %>
                 <a class="btn" href="UserProfileServlet?action=view&userID=<%= loggedUser.getUserID() %>">View My Profile</a>
                 <a class="btn" href="main_dashboard.jsp">View Products</a>
+                <form action="AccessLogServlet" method="get" style="display:inline;">
+                    <input type="hidden" name="userId" value="<%= loggedUser.getUserID() %>" />
+                    <button type="submit" class="btn btn-blue">View Access Logs</button>
+                </form>
+
             <% } %>
 
             <a class="btn btn-secondary" href="logout.jsp">Logout</a>

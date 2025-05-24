@@ -20,6 +20,10 @@ public class DBManager {
         this.conn = conn;
     }
 
+    public Connection getConnection() {
+        return conn;
+    }    
+
     // Find user by email and password in the database
     public User findUser(String email, String password) throws SQLException {
         String query = "SELECT * FROM user WHERE email = ? AND password = ?";
@@ -58,28 +62,11 @@ public class DBManager {
                 user.setPhoneNumber(rs.getString("phone"));
                 user.setAddress(rs.getString("address"));
                 user.setUserType(rs.getString("user_type"));
-                user.setStatus(rs.getString("status")); // ✅ Make sure this line exists
+                user.setStatus(rs.getString("status")); 
                 return user;
             }
         }
         return null;
     }
     
-    
-    
-
-
-    // update a user details in the database
-    public void updateUser(String email, String name, String password, String gender, String favcol)
-            throws SQLException {
-        // code for update-operation
-
-    }
-
-    // delete a user from the database
-    public void deleteUser(String email) throws SQLException {
-        // code for delete-operation
-
-    }
-
 }

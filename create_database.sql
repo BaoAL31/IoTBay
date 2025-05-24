@@ -170,3 +170,11 @@ INSERT INTO device (name, type, unit_price, stock, created_at) VALUES
 
 ALTER TABLE user ADD COLUMN status VARCHAR(20) DEFAULT 'activated';
 
+CREATE TABLE access_log (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    access_type VARCHAR(10), -- login or logout
+    access_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+);
+
