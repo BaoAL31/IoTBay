@@ -40,6 +40,9 @@ public class OrderDAO {
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
+            if (rs == null) {
+                return -1;
+            }
             if (rs.next()) {
                 return rs.getInt("order_id");
             }
