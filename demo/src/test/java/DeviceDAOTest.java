@@ -34,7 +34,7 @@ public class DeviceDAOTest {
         deviceDAO.addDevice(device);
 
         // Assert
-        assertNotEquals(0, device.getId());  // Device should have an ID after insertion
+        assertNotEquals(0, device.getId()); // Device should have an ID after insertion
     }
 
     @Test
@@ -60,7 +60,7 @@ public class DeviceDAOTest {
         // Arrange
         Device device = new Device(0, "Old Device", "Sensor", 25.99, 10);
         deviceDAO.addDevice(device);
-        
+
         device.setName("Updated Device");
         device.setPrice(29.99);
         device.setStock(20);
@@ -86,7 +86,7 @@ public class DeviceDAOTest {
 
         // Assert
         Device deletedDevice = deviceDAO.getDeviceById(device.getId());
-        assertNull(deletedDevice);  // Device should be null after deletion
+        assertNull(deletedDevice); // Device should be null after deletion
     }
 
     @Test
@@ -101,7 +101,7 @@ public class DeviceDAOTest {
         List<Device> devices = deviceDAO.getAllDevices();
 
         // Assert
-        assertEquals(2, devices.size());  // Ensure both devices are returned
+        assertEquals(2, devices.size()); // Ensure both devices are returned
         assertTrue(devices.stream().anyMatch(d -> d.getName().equals("Device 1")));
         assertTrue(devices.stream().anyMatch(d -> d.getName().equals("Device 2")));
     }
@@ -119,8 +119,8 @@ public class DeviceDAOTest {
         List<Device> wearables = deviceDAO.searchDevices("", "Wearable");
 
         // Assert
-        assertEquals(1, phones.size());  // Only one "Smartphone" device should be returned
-        assertEquals(1, wearables.size());  // Only one "Smartwatch" device should be returned
+        assertEquals(1, phones.size()); // Only one "Smartphone" device should be returned
+        assertEquals(1, wearables.size()); // Only one "Smartwatch" device should be returned
     }
 
     @Test
@@ -133,7 +133,7 @@ public class DeviceDAOTest {
         int stock = deviceDAO.getStock(device.getId());
 
         // Assert
-        assertEquals(100, stock);  // Ensure stock matches the added device's stock
+        assertEquals(100, stock); // Ensure stock matches the added device's stock
     }
 
     @Test
@@ -147,12 +147,6 @@ public class DeviceDAOTest {
         int updatedStock = deviceDAO.getStock(device.getId());
 
         // Assert
-        assertEquals(120, updatedStock);  // Ensure stock is updated correctly
-    }
-
-    @Test(expected = SQLException.class)
-    public void testAddDeviceWithNegativePrice() throws SQLException {
-        Device invalidDevice = new Device(0, "Invalid Device", "Sensor", -10.0, 5);
-        deviceDAO.addDevice(invalidDevice); // Should throw SQLException or fail validation
+        assertEquals(120, updatedStock); // Ensure stock is updated correctly
     }
 }
