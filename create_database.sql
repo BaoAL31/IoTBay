@@ -36,7 +36,7 @@ CREATE TABLE Device (
 -- 3. Orders (formerly Carts)
 CREATE TABLE `Order` (
     order_id     INT AUTO_INCREMENT PRIMARY KEY,
-    user_id      INT,
+    user_id      INT NULL,
     status       ENUM('draft','submitted','cancelled') NOT NULL DEFAULT 'draft',
     created_at   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -82,34 +82,6 @@ CREATE TABLE PaymentItem (
 -- ================================================================
 -- Seed Data
 -- ================================================================
-
--- Orders (mostly for user_id=1)
-INSERT INTO `Order` (user_id, status, created_at, updated_at) VALUES
-  (1, 'draft',     '2025-04-20 09:00:00', '2025-04-20 09:00:00'),
-  (1, 'draft',     '2025-04-21 10:30:00', '2025-04-21 10:30:00'),
-  (1, 'submitted', '2025-04-22 14:00:00', '2025-04-22 14:05:00'),
-  (2, 'draft',     '2025-04-18 08:15:00', '2025-04-18 08:20:00'),
-  (3, 'cancelled', '2025-04-23 11:11:00', '2025-04-23 11:11:00');
-
--- OrderItems
-INSERT INTO OrderItem (order_id, device_id, quantity, unit_price, added_at) VALUES
-  (1,  1,  2,  49.95, '2025-04-20 09:01:00'),
-  (1,  4,  1,  59.00, '2025-04-20 09:02:00'),
-  (2,  2,  3,  79.99, '2025-04-21 10:32:00'),
-  (3,  3,  1, 129.50, '2025-04-22 14:01:00'),
-  (4,  5,  2,  99.99, '2025-04-18 08:16:00');
-
--- Payments (linked to orders)
-INSERT INTO Payment (order_id, method, card_number, amount, paid_at, status) VALUES
-  (3, 'Credit Card', '****-****-****-1234', 129.50, '2025-04-22 14:06:00', 'completed'),
-  (1, 'Credit Card', '****-****-****-5678', 159.90, '2025-04-20 09:05:00', 'completed'),
-  (4, 'Credit Card', '****-****-****-9012', 199.98, '2025-04-18 08:25:00', 'cancelled');
-
--- (Optional) PaymentItems for line-level allocations
-INSERT INTO PaymentItem (payment_id, order_item_id, amount) VALUES
-  (1, 4, 129.50),
-  (2, 1,  99.90),  -- e.g. sum of line items
-  (3, 5, 199.98);
 
 ALTER TABLE User ADD address VARCHAR(255);
 
@@ -169,6 +141,34 @@ INSERT INTO device (name, type, unit_price, stock, created_at) VALUES
 ('GateKeeper', 'Actuator', 120.00, 20, '2025-04-10 17:00:00');
 
 ALTER TABLE user ADD COLUMN status VARCHAR(20) DEFAULT 'activated';
+
+INSERT INTO `Order` (user_id, status, created_at, updated_at) VALUES
+  (1, 'draft',     '2025-04-20 09:00:00', '2025-04-20 09:00:00'),
+  (1, 'draft',     '2025-04-21 10:30:00', '2025-04-21 10:30:00'),
+  (1, 'submitted', '2025-04-22 14:00:00', '2025-04-22 14:05:00'),
+  (2, 'draft',     '2025-04-18 08:15:00', '2025-04-18 08:20:00'),
+  (3, 'cancelled', '2025-04-23 11:11:00', '2025-04-23 11:11:00');
+
+-- OrderItems
+INSERT INTO OrderItem (order_id, device_id, quantity, unit_price, added_at) VALUES
+  (1,  1,  2,  49.95, '2025-04-20 09:01:00'),
+  (1,  4,  1,  59.00, '2025-04-20 09:02:00'),
+  (2,  2,  3,  79.99, '2025-04-21 10:32:00'),
+  (3,  3,  1, 129.50, '2025-04-22 14:01:00'),
+  (4,  5,  2,  99.99, '2025-04-18 08:16:00');
+
+
+INSERT INTO Payment (order_id, method, card_number, amount, paid_at, status) VALUES
+  (3, 'Credit Card', '****-****-****-1234', 129.50, '2025-04-22 14:06:00', 'completed'),
+  (1, 'Credit Card', '****-****-****-5678', 159.90, '2025-04-20 09:05:00', 'completed'),
+  (4, 'Credit Card', '****-****-****-9012', 199.98, '2025-04-18 08:25:00', 'cancelled');
+
+-- (Optional) PaymentItems for line-level allocations
+INSERT INTO PaymentItem (payment_id, order_item_id, amount) VALUES
+  (1, 4, 129.50),
+  (2, 1,  99.90),  -- e.g. sum of line items
+  (3, 5, 199.98);
+
 
 CREATE TABLE access_log (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
