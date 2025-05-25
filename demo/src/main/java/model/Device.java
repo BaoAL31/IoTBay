@@ -2,11 +2,11 @@ package model;
 
 // Model class for devices/products in IoTBay
 public class Device {
-    private int id;           // database primary key
-    private String name;      // device name 
-    private String type;      // device category (e.g., “Sensor”)
-    private double price;     // unit price
-    private int stock;        // stock quantity
+    private int id; // database primary key
+    private String name; // device name
+    private String type; // device category (e.g., “Sensor”)
+    private double price; // unit price
+    private int stock; // stock quantity
 
     // Constructor for all fields
     public Device(int id, String name, String type, double price, int stock) {
@@ -22,6 +22,7 @@ public class Device {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -29,6 +30,7 @@ public class Device {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -36,6 +38,7 @@ public class Device {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -43,6 +46,7 @@ public class Device {
     public double getPrice() {
         return price;
     }
+
     public void setPrice(double price) {
         this.price = price;
     }
@@ -50,6 +54,7 @@ public class Device {
     public int getStock() {
         return stock;
     }
+
     public void setStock(int stock) {
         this.stock = stock;
     }
@@ -58,11 +63,11 @@ public class Device {
     @Override
     public String toString() {
         return "Device{" +
-               "id=" + id +
-               ", name='" + name + '\'' +
-               ", type='" + type + '\'' +
-               ", price=" + price +
-               ", stock=" + stock +
-               '}';
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                '}';
     }
 }

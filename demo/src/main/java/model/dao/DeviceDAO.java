@@ -11,7 +11,7 @@ import model.Device;
 
 // DAO class for CRUD operations on the device table
 public class DeviceDAO {
-    private final Connection connection;  // database connection passed in
+    private final Connection connection; // database connection passed in
 
     // Constructor takes an open Connection
     public DeviceDAO(Connection connection) {
@@ -27,7 +27,7 @@ public class DeviceDAO {
             statement.setString(2, device.getType());
             statement.setDouble(3, device.getPrice());
             statement.setInt(4, device.getStock());
-            statement.executeUpdate();  // execute insert
+            statement.executeUpdate(); // execute insert
         }
     }
 
@@ -79,7 +79,7 @@ public class DeviceDAO {
             statement.setDouble(3, device.getPrice());
             statement.setInt(4, device.getStock());
             statement.setInt(5, device.getId());
-            statement.executeUpdate();  // execute update
+            statement.executeUpdate(); // execute update
         }
     }
 
@@ -88,7 +88,7 @@ public class DeviceDAO {
         String query = "DELETE FROM device WHERE device_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
-            statement.executeUpdate();  // execute delete
+            statement.executeUpdate(); // execute delete
         }
     }
 
@@ -108,7 +108,7 @@ public class DeviceDAO {
                 }
             }
         }
-        return null;  // no matching record
+        return null; // no matching record
     }
 
     // Get current stock quantity for a given device
@@ -131,7 +131,7 @@ public class DeviceDAO {
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, newStock);
             statement.setInt(2, deviceId);
-            statement.executeUpdate();  // execute stock update
+            statement.executeUpdate(); // execute stock update
         }
     }
 }
