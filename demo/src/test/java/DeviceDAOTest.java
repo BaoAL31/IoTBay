@@ -149,4 +149,10 @@ public class DeviceDAOTest {
         // Assert
         assertEquals(120, updatedStock);  // Ensure stock is updated correctly
     }
+
+    @Test(expected = SQLException.class)
+    public void testAddDeviceWithNegativePrice() throws SQLException {
+        Device invalidDevice = new Device(0, "Invalid Device", "Sensor", -10.0, 5);
+        deviceDAO.addDevice(invalidDevice); // Should throw SQLException or fail validation
+    }
 }

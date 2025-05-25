@@ -20,9 +20,8 @@ Abilities:
     3. Admin is able to create, update and delete customers, staff and devices. As well as update account activation status.
 
 MySQL
-1.Download MySQL MySQL :: Download MySQL Installer
-2.Set up the mysql server, make sure port is "3306" and password is "1111"
-3.Download the MySQL extension in vscode
-4.Go to the database tab 
-5. Create a new connection with this config:
+1. Download MySQL MySQL :: Download MySQL Installer
+2. Set up the mysql server, make sure port is "3306" and password is "1111"
+3. Download the MySQL extension in vscode
+4. Go to the database tab 
 6. In the new connection, there should be an option to add a new database using sql. Copy everything from the create_database.sql file (on the git repo), paste it and then run the sql.
